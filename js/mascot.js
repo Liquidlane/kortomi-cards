@@ -2,6 +2,7 @@
 import { kortomiSVG, MOODS } from './art.js';
 import { speak } from './audio.js';
 import { store } from './store.js';
+import { EXTRA } from './lines-extra.js';
 
 export const LINES = {
   lobby: [
@@ -56,6 +57,8 @@ export const LINES = {
   solRecycle: ['Nochmal von vorn durch den Stapel.'],
   achievement: ['Ooh, ein Abzeichen! Glänzt fast so schön wie ich.', 'Erfolg freigeschaltet. Ich bin beeindruckt. Ein bisschen.'],
 };
+
+for (const [k, arr] of Object.entries(EXTRA)) LINES[k] = [...(LINES[k] || []), ...arr];
 
 const last = {};
 export function pick(key, vars = {}) {
@@ -116,7 +119,7 @@ export function jump(name) {
 // ---------- Sprechblase ----------
 const bubble = document.getElementById('bubble');
 const bubbleP = bubble.querySelector('p');
-let active = null, typeTimer = null, hideTimer = null, queueBusyUntil = 0;
+let active = null, typeTimer = null, hideTimer = null, queueBusyUntil = 0, lastSpoke = 0;
 
 export function say(name, text, { mood, priority = 1, hold } = {}) {
   if (!text) return;
@@ -154,6 +157,7 @@ export function say(name, text, { mood, priority = 1, hold } = {}) {
   step();
   const dur = hold ?? Math.max(2400, typing + 1500);
   queueBusyUntil = t + Math.min(dur, typing + 400);
+  lastSpoke = t + dur;
   hideTimer = setTimeout(hideBubble, dur);
 }
 
@@ -201,3 +205,27 @@ function positionBubble(text) {
   bubble.style.setProperty('--bo', cls.includes('side') ? (cls.includes('right') ? '100% 20%' : '0% 20%') : cls === 'tail-up' ? '50% 0%' : '50% 100%');
 }
 window.addEventListener('resize', () => { if (bubble.classList.contains('show')) hideBubble(); });
+
+// ---------- Zwischendurch-Geplapper ----------
+// getContext() liefert { name, key } für den aktiven Bildschirm oder null.
+// Bei "Viel" plaudert Kortomi nach ca. 20–40 s Ruhe, bei "Wenig" nach ca. 60–90 s, bei "Still" nie.
+const IDLE_MOODS = ['idle', 'smug', 'wink', 'think', 'happy'];
+export function startIdleChatter(getContext) {
+  let wait = 0;
+  const reset = () => { const c = store.d.settings.chatty; wait = c === 2 ? 20000 + Math.random() * 20000 : 60000 + Math.random() * 30000; };
+  reset();
+  setInterval(() => {
+    const chat = store.d.settings.chatty;
+    if (!chat || document.hidden || document.querySelector('.sheet.show')) return;
+    const ctx = getContext();
+    if (!ctx) return;
+    const now = performance.now();
+    if (now - lastSpoke < wait) return;
+    // Mal Smalltalk, mal Spiel-bezogen
+    const key = ctx.key && Math.random() < 0.4 ? ctx.key : 'idle';
+    say(ctx.name, pick(key), { mood: IDLE_MOODS[Math.floor(Math.random() * IDLE_MOODS.length)], priority: 3 });
+    ctx.onTalk?.();
+    reset();
+  }, 3000);
+}
+export function noteActivity() { lastSpoke = Math.max(lastSpoke, performance.now()); }

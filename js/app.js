@@ -2,7 +2,7 @@
 import { buildSprite, icon, useCard, medalSVG, chipSVG } from './art.js';
 import { unlockAudio, configureAudio, sfx } from './audio.js';
 import { store, ACHIEVEMENTS, achCount, setUnlockHandler, checkNightOwl, START_BALANCE } from './store.js';
-import { mountMascot, say, pick, detectCustomMascot, hideBubble, setMood } from './mascot.js';
+import { mountMascot, say, pick, detectCustomMascot, hideBubble, setMood, startIdleChatter, noteActivity } from './mascot.js';
 import { detectCustomBack } from './cards.js';
 import { initParallax, setReduced, celebrate } from './fx.js';
 import { fmt, updateBalance, toast } from './ui.js';
@@ -192,4 +192,16 @@ if ('serviceWorker' in navigator && location.protocol !== 'file:') {
   const start = location.hash.slice(1);
   if (start === 'blackjack' || start === 'solitaire') go(start);
   else lobbyGreet();
+  // Plaudern, wenn eine Weile nichts los ist; jede Eingabe zählt als Aktivität
+  addEventListener('pointerdown', noteActivity, { passive: true });
+  startIdleChatter(() => {
+    if (current === 'lobby') return { name: 'lobby', key: null };
+    if (current === 'blackjack') return { name: 'bj', key: 'idleBj' };
+    if (current === 'solitaire') {
+      if (!store.d.settings.mascotSol) return null;
+      const m = document.getElementById('sol-mascot');
+      return { name: 'sol', key: 'idleSol', onTalk: () => { m.classList.add('peek'); setTimeout(() => m.classList.remove('peek'), 6000); } };
+    }
+    return null;
+  });
 })();
