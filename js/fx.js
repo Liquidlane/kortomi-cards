@@ -88,15 +88,21 @@ export function sparkleAt(x, y) { burst(x, y, { n: 14, kinds: ['spark'], power: 
 
 // Parallax für das Diorama
 export function initParallax() {
+  // Nur in der Lobby, gedrosselt auf ein Update pro Bildschirmbild
   const scene = document.querySelector('.scene');
-  let tx = 0, ty = 0;
-  const apply = () => { if (reduced) return; scene.style.setProperty('--tilt-x', `${ty}deg`); scene.style.setProperty('--tilt-y', `${tx}deg`); };
+  let tx = 0, ty = 0, queued = false;
+  const apply = () => {
+    queued = false;
+    if (reduced || document.body.classList.contains('game-active')) return;
+    scene.style.setProperty('--tilt-x', `${ty.toFixed(2)}deg`); scene.style.setProperty('--tilt-y', `${tx.toFixed(2)}deg`);
+  };
+  const queue = () => { if (!queued) { queued = true; requestAnimationFrame(apply); } };
   addEventListener('pointermove', e => {
     if (e.pointerType !== 'mouse') return;
-    tx = (e.clientX / innerWidth - .5) * 5; ty = -(e.clientY / innerHeight - .5) * 3; apply();
+    tx = Math.round((e.clientX / innerWidth - .5) * 50) / 10; ty = -Math.round((e.clientY / innerHeight - .5) * 30) / 10; queue();
   }, { passive: true });
   addEventListener('deviceorientation', e => {
     if (e.gamma == null) return;
-    tx = Math.max(-4, Math.min(4, e.gamma / 8)); ty = Math.max(-3, Math.min(3, (e.beta - 45) / 12)); apply();
+    tx = Math.round(Math.max(-4, Math.min(4, e.gamma / 8)) * 10) / 10; ty = Math.round(Math.max(-3, Math.min(3, (e.beta - 45) / 12)) * 10) / 10; queue();
   }, { passive: true });
 }

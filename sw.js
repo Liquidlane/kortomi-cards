@@ -1,5 +1,5 @@
 // Offline-Cache für Kortomi Cards. VERSION erhöhen, wenn sich Dateien ändern.
-const VERSION = 'kortomi-v3';
+const VERSION = 'kortomi-v4';
 const CORE = [
   './', 'index.html', 'manifest.webmanifest', 'css/style.css',
   'js/app.js', 'js/art.js', 'js/audio.js', 'js/blackjack.js', 'js/cards.js', 'js/fx.js', 'js/mascot.js', 'js/solitaire.js', 'js/store.js', 'js/ui.js', 'js/voice.js', 'js/lines-extra.js',
