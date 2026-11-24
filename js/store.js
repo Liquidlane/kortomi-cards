@@ -15,7 +15,7 @@ const defaults = () => ({
   settings: { sound: true, volume: 0.7, voice: true, voicePitch: 1, draw3: false, tips: true, chatty: 2, motion: true, mascotSol: true },
   stats: {
     bj: { hands: 0, wins: 0, losses: 0, pushes: 0, blackjacks: 0, busts: 0, biggestWin: 0, peak: START_BALANCE, streak: 0, bestStreak: 0, dealerBusts: 0, gifts: 0 },
-    sol: { played: 0, won: 0, bestTime: 0, bestScore: 0, streak: 0, bestStreak: 0 },
+    sol: { played: 0, won: 0, bestTime: 0, bestScore: 0, streak: 0, bestStreak: 0, chips: 0 },
     hl: { rounds: 0, cashouts: 0, bestStreak: 0, biggestWin: 0 },
     vp: { hands: 0, wins: 0, biggestWin: 0, best: '' },
   },

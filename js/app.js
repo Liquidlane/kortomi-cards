@@ -207,7 +207,7 @@ function statsHTML() {
     ${st(fmt(b.gifts), 'Mitleids-Chips')}</div></div>
     <div class="stat-block"><h3>Solitaire</h3><div class="stat-grid">
     ${st(fmt(s.played), 'Spiele')}${st(fmt(s.won), 'Gewonnen')}${st(pct(s.won, s.played), 'Quote')}
-    ${st(t(s.bestTime), 'Bestzeit')}${st(fmt(s.bestScore), 'Höchste Punktzahl')}${st(fmt(s.bestStreak), 'Längste Serie')}</div></div>${extraStats()}`;
+    ${st(t(s.bestTime), 'Bestzeit')}${st(fmt(s.bestScore), 'Höchste Punktzahl')}${st(fmt(s.bestStreak), 'Längste Serie')}${st(fmt(s.chips || 0), 'Chips erspielt')}</div></div>${extraStats()}`;
 }
 
 function extraStats() {

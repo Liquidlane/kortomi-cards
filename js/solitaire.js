@@ -5,7 +5,7 @@ import { sfx, vibrate } from './audio.js';
 import { store, unlock } from './store.js';
 import { mountMascot, say, pick, setMood } from './mascot.js';
 import { celebrate, sparkleAt, batSwarm } from './fx.js';
-import { fmt } from './ui.js';
+import { fmt, updateBalance, toast } from './ui.js';
 import { runCascade } from './cascade.js';
 
 const M = 'sol';
@@ -418,7 +418,7 @@ function tick() {
 const clock = s => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
 
 function checkWin() {
-  if (!S.found.every(f => f.length === 13)) return;
+  if (S.won || !S.found.every(f => f.length === 13)) return;
   S.won = true;
   const bonus = S.time > 30 ? Math.round(700000 / S.time) : 0;
   S.score += bonus;
@@ -426,7 +426,16 @@ function checkWin() {
   st.won++; st.streak++; st.bestStreak = Math.max(st.bestStreak, st.streak);
   if (!st.bestTime || S.time < st.bestTime) st.bestTime = S.time;
   st.bestScore = Math.max(st.bestScore, S.score);
-  store.d.solSave = null; store.save();
+  // Chip-Prämie: Grundbetrag plus Boni, sofort gutgeschrieben
+  const reward = [['Sieg', 100]];
+  if (S.time < 180) reward.push(['Unter 3 Minuten', 50]);
+  if (!S.usedUndo) reward.push(['Ohne Zurück', 50]);
+  if (S.draw3) reward.push(['3 Karten ziehen', 50]);
+  const chips = reward.reduce((a, [, v]) => a + v, 0);
+  store.d.balance += chips;
+  st.chips = (st.chips || 0) + chips;
+  store.d.solSave = null; store.save(true);
+  updateBalance();
   unlock('sol_first');
   if (S.time < 180) unlock('sol_fast');
   if (S.draw3) unlock('sol_draw3');
@@ -434,10 +443,10 @@ function checkWin() {
   if (st.streak >= 3) unlock('sol_streak3');
   if (st.won >= 10) unlock('sol_ten');
   render();
-  setTimeout(() => winShow(bonus), 500);
+  setTimeout(() => winShow(bonus, reward, chips), 500);
 }
 
-async function winShow(bonus) {
+async function winShow(bonus, reward = [], chips = 0) {
   sfx.bigWin(); vibrate([30, 60, 30]);
   celebrate(true);
   setTimeout(() => batSwarm(10), 900);
@@ -457,8 +466,10 @@ async function winShow(bonus) {
   ov.className = 'overlay-card';
   ov.innerHTML = `<h3>Gewonnen!</h3><p>${S.usedUndo ? 'Sauber sortiert.' : 'Ganz ohne Zurück. Beeindruckend.'}</p>
     <div class="stats-row"><div><b>${clock(S.time)}</b><span>Zeit</span></div><div><b>${S.moves}</b><span>Züge</span></div><div><b>${fmt(S.score)}</b><span>Punkte${bonus ? ' inkl. Zeitbonus' : ''}</span></div></div>
+    ${chips ? `<div class="sol-reward"><b>+${fmt(chips)} Chips</b><span>${reward.map(([t, v]) => `${t} +${v}`).join(' · ')}</span></div>` : ''}
     <div class="row"><button class="btn primary" data-act="new">Neues Spiel</button></div>`;
   table.appendChild(ov);
+  if (chips) toast(`+${fmt(chips)} Chips`, 'Prämie für den Solitaire-Sieg');
   ov.querySelector('[data-act=new]').addEventListener('click', () => { ov.remove(); startNew(); });
 }
 
