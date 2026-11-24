@@ -6,6 +6,7 @@ import { store, unlock } from './store.js';
 import { mountMascot, say, pick, setMood } from './mascot.js';
 import { celebrate, sparkleAt, batSwarm } from './fx.js';
 import { fmt } from './ui.js';
+import { runCascade } from './cascade.js';
 
 const M = 'sol';
 const $ = s => document.querySelector(s);
@@ -441,13 +442,17 @@ async function winShow(bonus) {
   celebrate(true);
   setTimeout(() => batSwarm(10), 900);
   talk(S.time < 180 ? 'solFast' : 'solWin', 'love', 3);
-  // Karten hüpfen nacheinander
-  const all = S.found.flat();
-  all.forEach((c, i) => {
-    const el = layer.elOf(c);
-    el && el.animate([{ translate: '0 0' }, { translate: `0 ${-L.ch * 0.5}px` }, { translate: '0 0' }], { duration: 520, delay: i * 22, easing: 'cubic-bezier(.3,.7,.4,1)' });
-  });
-  await sleep(1400);
+  // Karten springen nacheinander von den Ablagestapeln und hüpfen mit Spur über den Tisch
+  if (store.d.settings.motion && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    await sleep(700);
+    const launches = [];
+    for (let r = 12; r >= 0; r--) for (let fi = 0; fi < 4; fi++) {
+      const c = S.found[fi][r];
+      if (c) launches.push({ card: c, x: L.colX(3 + fi), y: L.y0, el: layer.elOf(c) });
+    }
+    mascotEl.classList.add('peek');
+    await runCascade(table, launches, { cw: L.cw, ch: L.ch });
+  } else await sleep(1400);
   const ov = document.createElement('div');
   ov.className = 'overlay-card';
   ov.innerHTML = `<h3>Gewonnen!</h3><p>${S.usedUndo ? 'Sauber sortiert.' : 'Ganz ohne Zurück. Beeindruckend.'}</p>
