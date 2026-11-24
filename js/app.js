@@ -2,6 +2,7 @@
 import { buildSprite, icon, useCard, medalSVG, chipSVG } from './art.js';
 import { unlockAudio, configureAudio, sfx } from './audio.js';
 import { store, ACHIEVEMENTS, achCount, setUnlockHandler, checkNightOwl, START_BALANCE, owns } from './store.js';
+import { mountClerk, hideClerk } from './clerk.js';
 import { mountMascot, say, pick, detectCustomMascot, hideBubble, setMood, startIdleChatter, poke } from './mascot.js';
 import { detectCustomBack } from './cards.js';
 import { initParallax, setReduced, celebrate } from './fx.js';
@@ -131,22 +132,15 @@ function openSheet(kind) {
   if (kind === 'settings') { $('#sheet-title').textContent = 'Einstellungen'; body.innerHTML = settingsHTML(); bindSettings(body); }
   if (kind === 'stats') { $('#sheet-title').textContent = 'Statistik'; body.innerHTML = statsHTML(); }
   if (kind === 'achievements') { $('#sheet-title').textContent = 'Erfolge'; body.innerHTML = achHTML(); }
-  if (kind === 'shop') { $('#sheet-title').textContent = 'Upgrade-Shop'; body.innerHTML = shopHTML(); bindShop(body, SHOP_HOOKS); }
+  if (kind === 'shop') { $('#sheet-title').textContent = 'Upgrade-Shop'; body.innerHTML = shopHTML(); bindShop(body, SHOP_HOOKS); hideBubble(); mountClerk($('#clerk')); }
   sheet.classList.add('show'); backdrop.classList.add('show');
   setTimeout(() => $('#sheet-close').focus({ preventScroll: true }), 50);
 }
-const SHOP_SAY = {
-  games: 'Ein neues Spiel? Mehr Wege, mir deine Chips zu geben. Ich liebe es.',
-  felt: 'Neuer Filz! Riecht noch nach Gruft. Herrlich.',
-  back: 'Hübsche Rückseite. Ändert nichts daran, dass ich gewinne.',
-  perks: 'Investiert in Luxus. Sehr vernünftig. Für mich.',
-};
 const SHOP_HOOKS = {
   onBought: () => { refreshLobby(); updateBalance(); },
   onPlay: id => { closeSheet(); go(Object.keys(GAMES).find(g => GAMES[g] === id)); },
-  say: i => say({ lobby: 'lobby', blackjack: 'bj', solitaire: 'sol', hilo: 'hl', poker: 'vp' }[current], SHOP_SAY[i.cat], { mood: 'love', priority: 3 }),
 };
-function closeSheet() { sheet.classList.remove('show'); backdrop.classList.remove('show'); }
+function closeSheet() { hideClerk(); sheet.classList.remove('show'); backdrop.classList.remove('show'); }
 $('#sheet-close').addEventListener('click', closeSheet);
 backdrop.addEventListener('click', closeSheet);
 addEventListener('keydown', e => { if (e.key === 'Escape') closeSheet(); });

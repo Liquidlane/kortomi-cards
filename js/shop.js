@@ -4,6 +4,7 @@ import { cardBackSVG, setCardBack, chipSVG, useCard, icon } from './art.js';
 import { sfx } from './audio.js';
 import { fmt, updateBalance, toast } from './ui.js';
 import { burst } from './fx.js';
+import { clerkHTML, clerkEvent } from './clerk.js';
 
 const mini = (id, x, y, r) => `<span class="mini" style="left:${x}%;top:${y}%;transform:rotate(${r}deg)">${useCard(id)}</span>`;
 
@@ -79,10 +80,13 @@ function actionBtn(i) {
     if (i.cat === 'games') return `<button class="shop-btn use" data-play="${i.id}">Spielen</button>`;
     return `<button class="shop-btn on" disabled>${icon('check')}Gekauft</button>`;
   }
-  if (bal < i.price) return `<button class="shop-btn short" disabled>${icon('lock')}${fmt(i.price)}<small>noch ${fmt(i.price - bal)}</small></button>`;
+  if (bal < i.price) return `<button class="shop-btn short" aria-disabled="true" data-short="${i.id}">${icon('lock')}${fmt(i.price)}<small>noch ${fmt(i.price - bal)}</small></button>`;
   return `<button class="shop-btn buy" data-buy="${i.id}"><span class="mini-chip">${chipSVG(100)}</span>${fmt(i.price)}</button>`;
 }
 export function shopHTML() {
+  return `${clerkHTML()}<div class="shop-list">${shopListHTML()}</div>`;
+}
+function shopListHTML() {
   const total = ALL.filter(i => !i.free).length, got = ALL.filter(i => !i.free && owns(i.id)).length;
   return `<div class="shop-head">
       <div class="balance-pill"><span class="chip-ico">${chipSVG(100)}</span><span class="js-balance">${fmt(store.d.balance)}</span></div>
@@ -95,13 +99,13 @@ export function shopHTML() {
           <div class="shop-info"><b>${i.name}</b><span>${i.desc}</span></div>
           ${actionBtn(i)}
         </div>`).join('')}</div>`).join('')}
-    <p class="shop-foot">Kein Echtgeld, nur Kortomi-Chips. Pleite? Beim Blackjack gibt Kortomi dir Mitleids-Chips.</p>`;
+    <p class="shop-foot">Kein Echtgeld, nur Kortomi-Chips. Pleite? Beim Blackjack gibt Kortomi dir Mitleids-Chips. Von 20 bis 6 Uhr bedient Choc – bitte nicht wecken.</p>`;
 }
 
 // ---------- Kaufen ----------
 let armed = null, armT = null;
-export function bindShop(root, { onBought, onPlay, onLook, say }) {
-  const rerender = () => { root.innerHTML = shopHTML(); };
+export function bindShop(root, { onBought, onPlay, onLook }) {
+  const rerender = () => { const l = root.querySelector('.shop-list'); if (l) l.innerHTML = shopListHTML(); };
   if (root._shopBound) return; // Der Sheet-Körper wird wiederverwendet: nur einmal anmelden
   root._shopBound = true;
   root.addEventListener('click', e => {
@@ -110,20 +114,21 @@ export function bindShop(root, { onBought, onPlay, onLook, say }) {
     if (b.dataset.use) {
       const i = item(b.dataset.use);
       store.d.look[i.cat] = i.look; store.save();
-      applyLook(); sfx.tap(); rerender(); onLook?.(i);
+      applyLook(); sfx.tap(); rerender(); onLook?.(i); clerkEvent('use', i);
       return;
     }
     if (b.dataset.play) { onPlay?.(b.dataset.play); return; }
+    if (b.dataset.short) { sfx.nope(); clerkEvent('short', item(b.dataset.short)); return; }
     if (!b.dataset.buy) return;
     const i = item(b.dataset.buy);
     if (!i || owns(i.id)) return;
-    if (store.d.balance < i.price) { sfx.nope(); rerender(); return; }
+    if (store.d.balance < i.price) { sfx.nope(); rerender(); clerkEvent('short', i); return; }
     // Zweistufig: erst antippen, dann bestätigen
     if (armed !== i.id) {
       armed = i.id; clearTimeout(armT);
       root.querySelectorAll('.shop-btn.confirm').forEach(x => { x.classList.remove('confirm'); });
       b.classList.add('confirm'); b.innerHTML = `Kaufen?<small>${fmt(i.price)} Chips</small>`;
-      sfx.tap();
+      sfx.tap(); clerkEvent('arm', i);
       armT = setTimeout(() => { armed = null; if (b.isConnected) rerender(); }, 3500);
       return;
     }
@@ -140,6 +145,6 @@ export function bindShop(root, { onBought, onPlay, onLook, say }) {
     if (ALL.every(x => x.free || owns(x.id))) unlock('shop_all');
     rerender();
     onBought?.(i);
-    say?.(i);
+    clerkEvent('buy', i);
   });
 }

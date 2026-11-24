@@ -121,7 +121,7 @@ export const sfx = {
 // Kortomis Brabbel-Stimme: ein Buchstaben-Sample pro Zeichen, schnell und hochgepitcht
 const PITCH = [0.82, 1, 1.2];
 const MOOD_PITCH = { happy: 1.08, love: 1.12, shock: 1.16, sad: 0.88, smug: 0.95, think: 0.97, wink: 1.04, idle: 1 };
-export function speak(ch, { mood = 'idle', rise = 0, loud = false } = {}) {
+export function speak(ch, { mood = 'idle', rise = 0, loud = false, pitch = 1 } = {}) {
   if (!ok() || !voiceOn || !voiceBank) return;
   const key = letterKey(ch);
   if (!key) return;
@@ -130,7 +130,7 @@ export function speak(ch, { mood = 'idle', rise = 0, loud = false } = {}) {
   if (lastVoice) { try { lastVoice.gain.cancelScheduledValues(t); lastVoice.gain.setTargetAtTime(0, t, 0.012); } catch { } }
   const src = ctx.createBufferSource();
   src.buffer = voiceBank[key];
-  const rate = 1.7 * (PITCH[voicePitch] ?? 1) * (MOOD_PITCH[mood] ?? 1) * (1 + rise) * (0.95 + Math.random() * 0.1);
+  const rate = 1.7 * pitch * (PITCH[voicePitch] ?? 1) * (MOOD_PITCH[mood] ?? 1) * (1 + rise) * (0.95 + Math.random() * 0.1);
   src.playbackRate.value = rate;
   const g = ctx.createGain();
   g.gain.value = loud ? 0.2 : 0.15;
