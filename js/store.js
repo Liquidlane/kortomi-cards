@@ -5,11 +5,19 @@ export const START_BALANCE = 1000;
 const defaults = () => ({
   balance: START_BALANCE,
   pendingBet: 0,
+  pendingHl: 0,
+  pendingVp: 0,
   lastBet: 25,
+  owned: {},
+  look: { felt: 'velvet', back: 'kortomi' },
+  daily: '',
+  sideBet: { hl: 25, vp: 25 },
   settings: { sound: true, volume: 0.7, voice: true, voicePitch: 1, draw3: false, tips: true, chatty: 2, motion: true, mascotSol: true },
   stats: {
     bj: { hands: 0, wins: 0, losses: 0, pushes: 0, blackjacks: 0, busts: 0, biggestWin: 0, peak: START_BALANCE, streak: 0, bestStreak: 0, dealerBusts: 0, gifts: 0 },
     sol: { played: 0, won: 0, bestTime: 0, bestScore: 0, streak: 0, bestStreak: 0 },
+    hl: { rounds: 0, cashouts: 0, bestStreak: 0, biggestWin: 0 },
+    vp: { hands: 0, wins: 0, biggestWin: 0, best: '' },
   },
   ach: {},
   solSave: null,
@@ -57,6 +65,12 @@ export const ACHIEVEMENTS = [
   { id: 'sol_noundo', t: 'Ohne Netz', d: 'Gewinne Solitaire ohne „Zurück“.', m: 'gold', g: '✦' },
   { id: 'sol_streak3', t: 'Hattrick', d: 'Gewinne 3 Partien Solitaire in Folge.', m: 'pink', g: '3×' },
   { id: 'sol_ten', t: 'Kartenhai', d: 'Gewinne 10 Partien Solitaire.', m: 'gold', g: '10' },
+  { id: 'hl_streak5', t: 'Hellseherin', d: 'Rate bei „Höher oder Tiefer“ 5 Mal in Folge richtig.', m: 'lilac', g: '↕' },
+  { id: 'hl_x10', t: 'Alles auf eine Karte', d: 'Kassiere bei „Höher oder Tiefer“ das Zehnfache.', m: 'gold', g: '×10' },
+  { id: 'vp_quads', t: 'Viermal Glück', d: 'Bekomme einen Vierling im Video-Poker.', m: 'pink', g: '4' },
+  { id: 'vp_royal', t: 'Königlich', d: 'Bekomme einen Royal Flush im Video-Poker.', m: 'gold', g: '♚' },
+  { id: 'shop_first', t: 'Shopping-Tour', d: 'Kauf etwas im Upgrade-Shop.', m: 'pink', g: '✿' },
+  { id: 'shop_all', t: 'Ausverkauft', d: 'Kauf alles, was der Shop hergibt.', m: 'gold', g: '∞' },
   { id: 'night_owl', t: 'Nachteule', d: 'Spiele zwischen Mitternacht und 4 Uhr.', m: 'lilac', g: '☾' },
 ];
 
@@ -73,3 +87,7 @@ export function unlock(id) {
 }
 export function checkNightOwl() { const h = new Date().getHours(); if (h >= 0 && h < 4) unlock('night_owl'); }
 export const achCount = () => Object.keys(store.d.ach).length;
+
+// ---------- Upgrade-Shop: Besitz ----------
+export const owns = id => !!store.d.owned[id];
+export const chipValues = () => (owns('perk_chip1000') ? [5, 25, 100, 500, 1000] : [5, 25, 100, 500]);

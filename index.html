@@ -68,8 +68,20 @@
             <span class="pick-name">Solitaire</span>
             <span class="pick-desc">Klondike, ganz in Ruhe</span>
           </button>
+          <button class="pick pick-hilo" data-go="hilo" hidden>
+            <span class="pick-art" id="pick-art-hilo"></span>
+            <span class="pick-name">Höher?</span>
+            <span class="pick-desc">Höher oder tiefer raten</span>
+          </button>
+          <button class="pick pick-poker" data-go="poker" hidden>
+            <span class="pick-art" id="pick-art-poker"></span>
+            <span class="pick-name">Poker</span>
+            <span class="pick-desc">Video-Poker, Buben+</span>
+          </button>
         </nav>
         <div class="lobby-links">
+          <button class="text-btn shop-link" data-open="shop"><span class="ico ico-shop"></span>Upgrade-Shop</button>
+          <button class="text-btn daily-link" id="daily-btn" hidden><span class="ico ico-gift"></span>Tagesgeld abholen</button>
           <button class="text-btn" data-open="achievements"><span class="ico ico-trophy"></span>Erfolge <span class="js-ach-count"></span></button>
           <button class="text-btn" data-open="stats"><span class="ico ico-stats"></span>Statistik</button>
           <button class="text-btn" data-open="settings"><span class="ico ico-gear"></span>Einstellungen</button>
@@ -105,6 +117,56 @@
       <footer class="controls bj-controls" id="bj-controls">
         <div class="chip-rack" id="bj-rack"></div>
         <div class="action-row" id="bj-actions"></div>
+      </footer>
+    </section>
+
+    <!-- HÖHER ODER TIEFER (Shop) -->
+    <section class="screen game" id="screen-hilo">
+      <header class="topbar">
+        <button class="icon-btn back" data-go="lobby" aria-label="Zur Lobby"></button>
+        <div class="balance-pill"><span class="chip-ico"></span><span class="js-balance">1.000</span></div>
+        <div class="topbar-actions">
+          <button class="icon-btn js-sound" aria-label="Ton an/aus"></button>
+          <button class="icon-btn" data-open="settings" aria-label="Einstellungen"></button>
+        </div>
+      </header>
+      <div class="table side-table" id="hl-table">
+        <div class="felt">
+          <svg class="felt-print" viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+            <defs><path id="arc-hl" d="M160 470 Q500 600 840 470"/></defs>
+            <text class="felt-arc small"><textPath href="#arc-hl" startOffset="50%" text-anchor="middle">Gleiche Karte zählt nicht · Ass ist niedrig</textPath></text>
+          </svg>
+        </div>
+        <div class="side-dealer" id="hl-dealer"></div>
+        <div class="cards-layer" id="hl-cards"></div>
+        <div class="badges-layer" id="hl-badges"></div>
+      </div>
+      <footer class="controls bj-controls">
+        <div class="chip-rack" id="hl-rack"></div>
+        <div class="action-row" id="hl-actions"></div>
+      </footer>
+    </section>
+
+    <!-- VIDEO-POKER (Shop) -->
+    <section class="screen game" id="screen-poker">
+      <header class="topbar">
+        <button class="icon-btn back" data-go="lobby" aria-label="Zur Lobby"></button>
+        <div class="balance-pill"><span class="chip-ico"></span><span class="js-balance">1.000</span></div>
+        <div class="topbar-actions">
+          <button class="icon-btn js-sound" aria-label="Ton an/aus"></button>
+          <button class="icon-btn" data-open="settings" aria-label="Einstellungen"></button>
+        </div>
+      </header>
+      <div class="table side-table" id="vp-table">
+        <div class="felt"></div>
+        <div class="side-dealer" id="vp-dealer"></div>
+        <div class="paytable" id="vp-pay" aria-label="Gewinntabelle"></div>
+        <div class="cards-layer" id="vp-cards"></div>
+        <div class="badges-layer" id="vp-badges"></div>
+      </div>
+      <footer class="controls bj-controls">
+        <div class="chip-rack" id="vp-rack"></div>
+        <div class="action-row" id="vp-actions"></div>
       </footer>
     </section>
 

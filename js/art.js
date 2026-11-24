@@ -145,26 +145,40 @@ export function cardFaceSVG(rank, suit) {
 }
 
 // ---------- Kartenrücken ----------
-function cardBackSVG() {
+// Farbthemen für den Rücken; im Upgrade-Shop freischaltbar.
+export const BACK_THEMES = {
+  kortomi: { bg: '#241030', pat: '#3a1650', accent: '#ff5fa2', trim: '#e8c27a' },
+  frost: { bg: '#0d1a33', pat: '#16305a', accent: '#7fd6ff', trim: '#d9ecff' },
+  toxic: { bg: '#0f2216', pat: '#1a3a22', accent: '#9dff6a', trim: '#d8ff9e' },
+  noir: { bg: '#0b0b0e', pat: '#18161d', accent: '#e8c27a', trim: '#f3d595' },
+};
+export function cardBackSVG(themeId = 'kortomi', uid = 'sp') {
+  const t = BACK_THEMES[themeId] || BACK_THEMES.kortomi;
+  const k = `${themeId}-${uid}`;
   return `<defs>
-    <pattern id="bk-pat" width="36" height="36" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
-      <rect width="36" height="36" fill="#3a1650"/>
-      <path d="M0 18h36M18 0v36" stroke="#ff5fa2" stroke-opacity=".22" stroke-width="1.2"/>
-      <path d="${SUIT_PATH.H}" fill="#ff5fa2" opacity=".55" transform="translate(13 13) scale(.1)"/>
-      <circle cx="0" cy="0" r="2" fill="#e8c27a" opacity=".6"/><circle cx="36" cy="36" r="2" fill="#e8c27a" opacity=".6"/>
+    <pattern id="bk-pat-${k}" width="36" height="36" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <rect width="36" height="36" fill="${t.pat}"/>
+      <path d="M0 18h36M18 0v36" stroke="${t.accent}" stroke-opacity=".22" stroke-width="1.2"/>
+      <path d="${SUIT_PATH.H}" fill="${t.accent}" opacity=".55" transform="translate(13 13) scale(.1)"/>
+      <circle cx="0" cy="0" r="2" fill="${t.trim}" opacity=".6"/><circle cx="36" cy="36" r="2" fill="${t.trim}" opacity=".6"/>
     </pattern>
-    <radialGradient id="bk-glow" cx="50%" cy="50%" r="60%"><stop offset="0" stop-color="#ff5fa2" stop-opacity=".4"/><stop offset="1" stop-color="#ff5fa2" stop-opacity="0"/></radialGradient>
+    <radialGradient id="bk-glow-${k}" cx="50%" cy="50%" r="60%"><stop offset="0" stop-color="${t.accent}" stop-opacity=".4"/><stop offset="1" stop-color="${t.accent}" stop-opacity="0"/></radialGradient>
   </defs>
-  <rect width="250" height="350" rx="18" fill="#241030"/>
-  <rect x="12" y="12" width="226" height="326" rx="10" fill="url(#bk-pat)"/>
-  <rect x="12" y="12" width="226" height="326" rx="10" fill="url(#bk-glow)"/>
-  <rect x="12" y="12" width="226" height="326" rx="10" fill="none" stroke="#e8c27a" stroke-width="2.5"/>
-  <rect x="19" y="19" width="212" height="312" rx="7" fill="none" stroke="#e8c27a" stroke-opacity=".4" stroke-width="1"/>
+  <rect width="250" height="350" rx="18" fill="${t.bg}"/>
+  <rect x="12" y="12" width="226" height="326" rx="10" fill="url(#bk-pat-${k})"/>
+  <rect x="12" y="12" width="226" height="326" rx="10" fill="url(#bk-glow-${k})"/>
+  <rect x="12" y="12" width="226" height="326" rx="10" fill="none" stroke="${t.trim}" stroke-width="2.5"/>
+  <rect x="19" y="19" width="212" height="312" rx="7" fill="none" stroke="${t.trim}" stroke-opacity=".4" stroke-width="1"/>
   <g transform="translate(125 175)">
-    <circle r="50" fill="#241030" stroke="#e8c27a" stroke-width="2.5"/>
-    <circle r="44" fill="none" stroke="#ff5fa2" stroke-opacity=".5" stroke-width="1" stroke-dasharray="2 4"/>
+    <circle r="50" fill="${t.bg}" stroke="${t.trim}" stroke-width="2.5"/>
+    <circle r="44" fill="none" stroke="${t.accent}" stroke-opacity=".5" stroke-width="1" stroke-dasharray="2 4"/>
     <g transform="translate(-38 -44) scale(.32)">${kortomiHeadEmblem()}</g>
   </g>`;
+}
+// Tauscht den Rücken im Sprite aus: alle Karten mit <use href="#c-back"> ändern sich sofort.
+export function setCardBack(themeId) {
+  const sym = document.getElementById('c-back');
+  if (sym) sym.innerHTML = cardBackSVG(themeId);
 }
 
 // Kopf als Emblem (für Rücken & Icon), Koordinaten wie im Maskottchen
@@ -288,14 +302,16 @@ const CHIP_STYLE = {
   25: { base: '#8d5cff', edge: '#e8dcff', ink: '#fff', ring: '#5a2fbf' },
   100: { base: '#2a1238', edge: '#e8c27a', ink: '#e8c27a', ring: '#e8c27a' },
   500: { base: '#e8c27a', edge: '#2a1238', ink: '#2a1238', ring: '#b98a3e' },
+  1000: { base: '#101014', edge: '#ff5fa2', ink: '#ff8cc3', ring: '#ff5fa2' },
 };
+export const CHIP_VALUES_ALL = [5, 25, 100, 500, 1000];
 export function chipSVG(v) {
   const s = CHIP_STYLE[v];
   const notches = Array.from({ length: 8 }, (_, i) => `<rect x="44" y="2" width="12" height="14" rx="2" fill="${s.edge}" transform="rotate(${i * 45} 50 50)"/>`).join('');
   return `<svg viewBox="0 0 100 100" class="chip-svg"><circle cx="50" cy="50" r="48" fill="${s.base}"/>${notches}
     <circle cx="50" cy="50" r="34" fill="${s.base}" stroke="${s.ring}" stroke-width="2.5" stroke-dasharray="5 4"/>
     <circle cx="50" cy="50" r="27" fill="${s.base}" stroke="${s.edge}" stroke-opacity=".6" stroke-width="1.5"/>
-    <text x="50" y="${v >= 100 ? 58 : 60}" text-anchor="middle" font-family="Fredoka, system-ui, sans-serif" font-weight="700" font-size="${v >= 100 ? 24 : 28}" fill="${s.ink}">${v}</text>
+    <text x="50" y="${v >= 100 ? 58 : 60}" text-anchor="middle" font-family="Fredoka, system-ui, sans-serif" font-weight="700" font-size="${v >= 1000 ? 22 : v >= 100 ? 24 : 28}" fill="${s.ink}">${v >= 1000 ? '1K' : v}</text>
     <ellipse cx="38" cy="26" rx="18" ry="8" fill="#fff" opacity=".18"/></svg>`;
 }
 export function chipSideSVG(v) { // für Stapel: flache Seitenansicht
@@ -307,7 +323,7 @@ export function chipSideSVG(v) { // für Stapel: flache Seitenansicht
 }
 export function chipBreakdown(amount) {
   const out = [];
-  for (const v of [...CHIP_VALUES].reverse()) while (amount >= v) { out.push(v); amount -= v; }
+  for (const v of [...CHIP_VALUES_ALL].reverse()) while (amount >= v) { out.push(v); amount -= v; }
   return out;
 }
 
@@ -331,6 +347,10 @@ const ICONS = {
   new: '<rect x="5" y="3.5" width="11" height="15" rx="2"/><path d="M9 21.5h8a2 2 0 002-2V8"/><path d="M10.5 8v6M7.5 11h6"/>',
   undo: '<path d="M9 14L4 9l5-5"/><path d="M4 9h10a6 6 0 010 12h-3"/>',
   bulb: '<path d="M9 18h6M10 21h4M12 3a6 6 0 00-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0012 3z"/>',
+  shop: '<path d="M5 8h14l-1.2 11.2a2 2 0 01-2 1.8H8.2a2 2 0 01-2-1.8z"/><path d="M9 10V7a3 3 0 016 0v3"/>',
+  gift: '<rect x="4" y="9" width="16" height="11" rx="1.5"/><path d="M3 9h18M12 9v11M12 9c-1-3-5-4.5-5.5-2S10 9 12 9zM12 9c1-3 5-4.5 5.5-2S14 9 12 9z"/>',
+  lock: '<rect x="5.5" y="10.5" width="13" height="10" rx="2"/><path d="M8.5 10.5V8a3.5 3.5 0 017 0v2.5"/>',
+  check: '<path d="M5 12.5l4.5 4.5L19 7.5"/>',
   magic: '<path d="M4 20L15 9M14 4l1 2 2 1-2 1-1 2-1-2-2-1 2-1zM19 11l.7 1.3L21 13l-1.3.7L19 15l-.7-1.3L17 13l1.3-.7z"/>',
 };
 export function icon(name) { return `<svg class="i" viewBox="0 0 24 24" aria-hidden="true">${ICONS[name] || ''}</svg>`; }
@@ -339,7 +359,7 @@ export function icon(name) { return `<svg class="i" viewBox="0 0 24 24" aria-hid
 export function buildSprite(el) {
   let out = '';
   for (const s of SUITS) for (let r = 1; r <= 13; r++) out += `<symbol id="c-${r}${s}" viewBox="0 0 250 350">${cardFaceSVG(r, s)}</symbol>`;
-  out += `<symbol id="c-back" viewBox="0 0 250 350">${cardBackSVG()}</symbol>`;
+  out += `<symbol id="c-back" viewBox="0 0 250 350">${cardBackSVG('kortomi')}</symbol>`;
   for (const s of SUITS) out += `<symbol id="suit-${s}" viewBox="0 0 100 100"><path d="${SUIT_PATH[s]}" fill="currentColor"/></symbol>`;
   el.innerHTML = out;
 }

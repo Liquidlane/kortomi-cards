@@ -1,8 +1,8 @@
 // Blackjack gegen Kortomi — 6 Decks, Dealer steht auf Soft 17, BJ 3:2, Double, Split bis 4 Hände, Versicherung.
 import { CardLayer, newDeck, shuffle, sleep } from './cards.js';
-import { chipSVG, chipSideSVG, chipBreakdown, CHIP_VALUES } from './art.js';
+import { chipSVG, chipSideSVG, chipBreakdown } from './art.js';
 import { sfx, vibrate } from './audio.js';
-import { store, unlock } from './store.js';
+import { store, unlock, chipValues } from './store.js';
 import { mountMascot, say, pick, setMood, jump } from './mascot.js';
 import { celebrate, burst } from './fx.js';
 import { fmt, updateBalance, toast } from './ui.js';
@@ -176,7 +176,7 @@ function renderBet() {
 
 function renderRack() {
   rack.innerHTML = '';
-  for (const v of CHIP_VALUES) {
+  for (const v of chipValues()) {
     const b = document.createElement('button');
     b.className = 'chip-btn'; b.innerHTML = chipSVG(v);
     b.setAttribute('aria-label', `${v} setzen`);

@@ -262,7 +262,7 @@ svg.i { width: 1.25em; height: 1.25em; fill: none; stroke: currentColor; stroke-
   border-radius: 28px;
   background:
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .09 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
-    radial-gradient(120% 90% at 50% 30%, #55246f 0%, var(--velvet) 45%, var(--velvet-dark) 100%);
+    radial-gradient(120% 90% at 50% 30%, var(--felt-hi) 0%, var(--felt-mid) 45%, var(--felt-dark) 100%);
   box-shadow:
     0 0 0 10px #1a0a12,
     0 0 0 11px rgba(232,194,122,.55),
@@ -627,3 +627,93 @@ input[type=range] { accent-color: var(--candy); width: 130px; }
 .sol-mascot > svg, .sol-mascot > img { pointer-events: auto; cursor: pointer; }
 #lobby-mascot > svg, #lobby-mascot > img { cursor: pointer; }
 .sol-mascot.away > svg, .sol-mascot.away > img { pointer-events: none; }
+
+/* ==========================================================================
+   Upgrade-Shop: Filzfarben, neue Spiele, Shop-Dialog
+   ========================================================================== */
+:root, [data-felt="velvet"] { --felt-hi: #55246f; --felt-mid: var(--velvet); --felt-dark: var(--velvet-dark); }
+[data-felt="emerald"] { --felt-hi: #22704c; --felt-mid: #134a33; --felt-dark: #0a2a1d; }
+[data-felt="midnight"] { --felt-hi: #2e4391; --felt-mid: #1a2760; --felt-dark: #0e1538; }
+[data-felt="blood"] { --felt-hi: #7f1834; --felt-mid: #4e0c1f; --felt-dark: #2a0612; }
+
+/* Lobby mit mehr Spielen */
+.game-picks.many { flex-wrap: wrap; max-width: 520px; margin: 0 auto; gap: 10px 12px; }
+.game-picks.many .pick { width: clamp(132px, 40vw, 200px); padding: 8px 8px 10px; }
+.game-picks.many .pick-art { aspect-ratio: 2.1; margin-bottom: 2px; }
+.game-picks.many .pick-art .mini { width: 30%; }
+.game-picks.many .pick-name { font-size: clamp(22px, 5vw, 30px); }
+.game-picks.many .pick-desc { font-size: 12px; }
+.pick-poker:hover { transform: translateY(-4px) rotate(1deg); }
+.shop-link { color: var(--brass); box-shadow: inset 0 0 0 1.5px rgba(232,194,122,.45); }
+.shop-link:hover { background: rgba(232,194,122,.12); }
+.daily-link { color: #ffd76e; animation: daily-glow 1.8s ease-in-out infinite; }
+@keyframes daily-glow { 50% { background: rgba(232,194,122,.16); } }
+
+/* Neue Spieltische */
+.side-table { margin-top: 2px; }
+.side-dealer { position: absolute; left: 4px; top: 0; transform: translateY(-14%); z-index: 2; pointer-events: none; }
+.side-dealer .kortomi, .side-dealer img { width: 100%; height: 100%; }
+.side-dealer > svg, .side-dealer > img { pointer-events: auto; cursor: pointer; }
+.chip-btn.sel { transform: translateY(-6px) scale(1.06); filter: drop-shadow(0 0 10px rgba(255,95,162,.8)) drop-shadow(0 6px 8px rgba(0,0,0,.45)); }
+.chip-btn.sel:hover { transform: translateY(-8px) scale(1.06); }
+.card.held .face { box-shadow: 0 0 0 2.5px var(--candy), 0 0 20px rgba(255,95,162,.55); }
+#vp-cards .card { cursor: pointer; }
+.hold-tag { font-size: 13px; padding: 2px 10px; color: var(--text-dim); }
+.hold-tag.active { color: #fff; background: var(--candy); }
+.paytable {
+  position: absolute; right: 12px; top: 12px; z-index: 3; overflow: hidden;
+  display: grid; grid-template-columns: 1fr; gap: 1px; align-content: start;
+  padding: 8px 12px; border-radius: 14px; font-size: clamp(11px, 2.6vw, 14px);
+  background: rgba(23, 11, 32, .55); box-shadow: inset 0 0 0 1.5px rgba(232,194,122,.4);
+  font-variant-numeric: tabular-nums; pointer-events: none;
+}
+.pay-row { display: flex; justify-content: space-between; gap: 12px; padding: 1px 6px; border-radius: 6px; color: var(--lilac-soft); line-height: 1.35; }
+.pay-row b { color: var(--brass); font-weight: 600; }
+.pay-row.hit { background: var(--candy); color: #fff; }
+.pay-row.hit b { color: #fff; }
+
+/* Shop-Dialog */
+.shop-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 4px; }
+.shop-progress { font-size: 13px; color: var(--text-dim); }
+.shop-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; margin-bottom: 6px; }
+.shop-item {
+  display: grid; grid-template-columns: 64px 1fr; grid-template-rows: 1fr auto; gap: 6px 12px; align-items: center;
+  padding: 10px 12px; border-radius: 16px; background: rgba(184,156,255,.07);
+  box-shadow: inset 0 0 0 1px rgba(184,156,255,.12);
+}
+.shop-item.owned { background: rgba(232,194,122,.06); }
+.shop-item > :first-child { grid-row: 1 / 3; }
+.shop-info b { display: block; font-weight: 600; color: var(--bone); }
+.shop-info span { display: block; font-size: 13px; color: var(--text-dim); line-height: 1.3; }
+.shop-art { position: relative; display: block; width: 64px; height: 64px; }
+.shop-art .mini { position: absolute; width: 46%; aspect-ratio: 250/350; border-radius: 8%; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,.5); }
+.shop-art .mini svg, .shop-chip svg, .shop-back svg { width: 100%; height: 100%; display: block; }
+.shop-chip { display: block; width: 56px; height: 56px; margin: 4px; filter: drop-shadow(0 4px 6px rgba(0,0,0,.45)); }
+.shop-glyph { display: grid; place-items: center; width: 64px; height: 64px; border-radius: 16px; background: rgba(232,194,122,.14); color: var(--brass); }
+.shop-glyph svg.i { width: 34px; height: 34px; }
+.shop-back { display: block; width: 46px; aspect-ratio: 250/350; margin: 0 9px; border-radius: 5px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,.5); }
+.shop-felt {
+  display: block; width: 64px; height: 46px; border-radius: 12px;
+  background: radial-gradient(120% 90% at 50% 30%, var(--felt-hi) 0%, var(--felt-mid) 45%, var(--felt-dark) 100%);
+  box-shadow: 0 0 0 3px #1a0a12, 0 0 0 4px rgba(232,194,122,.55);
+}
+.shop-btn {
+  justify-self: start; display: inline-flex; align-items: center; gap: 6px; flex-wrap: wrap;
+  min-height: 36px; padding: 5px 14px; border-radius: 12px; font-weight: 600; font-size: 15px;
+  font-variant-numeric: tabular-nums; transition: transform .15s, background .2s;
+}
+.shop-btn svg.i { width: 18px; height: 18px; }
+.shop-btn small { flex-basis: 100%; font-size: 11px; font-weight: 500; opacity: .8; margin-top: -3px; }
+.shop-btn:active { transform: scale(.95); }
+.shop-btn.buy { background: linear-gradient(180deg, #f3d595, #c9963f); color: #3a1d10; box-shadow: 0 4px 12px rgba(185,138,62,.3); }
+.shop-btn.buy .mini-chip { width: 18px; height: 18px; display: block; }
+.shop-btn.buy .mini-chip svg { width: 100%; height: 100%; display: block; }
+.shop-btn.confirm { background: linear-gradient(180deg, #ff7ab4, #e0307a); color: #fff; animation: btn-in .3s var(--ease-spring); }
+.shop-btn.use { background: rgba(184,156,255,.16); color: var(--lilac-soft); box-shadow: inset 0 0 0 1.5px rgba(184,156,255,.35); }
+.shop-btn.on { color: var(--brass); padding-left: 4px; }
+.shop-btn.short { color: var(--text-dim); background: rgba(184,156,255,.06); }
+.shop-foot { font-size: 12.5px; color: var(--text-dim); margin-top: 14px; }
+
+@media (max-height: 520px) and (orientation: landscape) {
+  .game-picks.many .pick-art { display: none; }
+}

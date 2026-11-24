@@ -1,20 +1,24 @@
 // Einstieg: Navigation, Lobby, Dialoge, Einstellungen, PWA.
 import { buildSprite, icon, useCard, medalSVG, chipSVG } from './art.js';
 import { unlockAudio, configureAudio, sfx } from './audio.js';
-import { store, ACHIEVEMENTS, achCount, setUnlockHandler, checkNightOwl, START_BALANCE } from './store.js';
+import { store, ACHIEVEMENTS, achCount, setUnlockHandler, checkNightOwl, START_BALANCE, owns } from './store.js';
 import { mountMascot, say, pick, detectCustomMascot, hideBubble, setMood, startIdleChatter, poke } from './mascot.js';
 import { detectCustomBack } from './cards.js';
 import { initParallax, setReduced, celebrate } from './fx.js';
 import { fmt, updateBalance, toast } from './ui.js';
 import { enterBlackjack } from './blackjack.js';
 import { enterSolitaire, solitaireSettingChanged } from './solitaire.js';
+import { enterHilo } from './hilo.js';
+import { enterPoker } from './poker.js';
+import { shopHTML, bindShop, applyLook, dailyReady, claimDaily, DAILY_AMOUNT } from './shop.js';
 
 const $ = s => document.querySelector(s);
 const $$ = s => [...document.querySelectorAll(s)];
 
 // ---------- Start ----------
 buildSprite($('#sprite'));
-if (store.d.pendingBet) { store.d.balance += store.d.pendingBet; store.d.pendingBet = 0; store.save(true); }
+for (const k of ['pendingBet', 'pendingHl', 'pendingVp']) if (store.d[k]) { store.d.balance += store.d[k]; store.d[k] = 0; store.save(true); }
+applyLook();
 
 function applySettings() {
   const s = store.d.settings;
@@ -29,7 +33,7 @@ $$('.icon-btn.back').forEach(b => (b.innerHTML = icon('back')));
 $$('.icon-btn[data-open="settings"]').forEach(b => (b.innerHTML = icon('gear')));
 $('#sheet-close').innerHTML = icon('close');
 $('#bj-hint').innerHTML = icon('bulb');
-const ICO = { 'ico-trophy': 'trophy', 'ico-stats': 'stats', 'ico-gear': 'gear', 'ico-new': 'new', 'ico-undo': 'undo', 'ico-bulb': 'bulb', 'ico-magic': 'magic' };
+const ICO = { 'ico-shop': 'shop', 'ico-gift': 'gift', 'ico-trophy': 'trophy', 'ico-stats': 'stats', 'ico-gear': 'gear', 'ico-new': 'new', 'ico-undo': 'undo', 'ico-bulb': 'bulb', 'ico-magic': 'magic' };
 $$('.ico').forEach(el => { for (const k in ICO) if (el.classList.contains(k)) el.outerHTML = icon(ICO[k]); });
 $$('.chip-ico').forEach(el => (el.innerHTML = chipSVG(100)));
 
@@ -37,6 +41,24 @@ $$('.chip-ico').forEach(el => (el.innerHTML = chipSVG(100)));
 function mini(id, x, y, r) { return `<span class="mini" style="left:${x}%;top:${y}%;transform:rotate(${r}deg)">${useCard(id)}</span>`; }
 $('#pick-art-bj').innerHTML = mini('1S', 14, 4, -12) + mini('13H', 44, 0, 10);
 $('#pick-art-sol').innerHTML = mini('back', 6, 6, -6) + mini('12C', 30, 2, 0) + mini('11D', 54, 6, 7);
+$('#pick-art-hilo').innerHTML = mini('7H', 10, 6, -10) + mini('back', 44, 2, 8);
+$('#pick-art-poker').innerHTML = mini('1S', 4, 8, -12) + mini('13S', 29, 2, -2) + mini('12S', 54, 8, 9);
+
+// Gekaufte Spiele in der Lobby zeigen, Tagesgeld-Knopf
+const GAMES = { hilo: 'game_hilo', poker: 'game_poker' };
+function refreshLobby() {
+  let n = 2;
+  for (const g in GAMES) { const on = owns(GAMES[g]); $(`.pick-${g}`).hidden = !on; if (on) n++; }
+  $('.game-picks').classList.toggle('many', n > 2);
+  $('#daily-btn').hidden = !dailyReady();
+  $('#daily-btn').lastChild.textContent = `Tagesgeld abholen (+${DAILY_AMOUNT})`;
+}
+$('#daily-btn').addEventListener('click', () => {
+  if (!claimDaily()) return;
+  sfx.sparkle(); toast(`+${DAILY_AMOUNT} Chips`, 'Kortomis Tagesgeld. Gib’s nicht gleich aus.');
+  say('lobby', 'Hier. Dein Taschengeld. Und jetzt verspiel es brav bei mir.', { mood: 'wink', priority: 3 });
+  refreshLobby();
+});
 
 // ---------- Navigation ----------
 let current = 'lobby';
@@ -49,6 +71,8 @@ function go(name) {
   sfx.whoosh();
   if (name === 'blackjack') enterBlackjack();
   else if (name === 'solitaire') enterSolitaire();
+  else if (name === 'hilo') enterHilo();
+  else if (name === 'poker') enterPoker();
   else lobbyGreet();
   history.replaceState(null, '', name === 'lobby' ? location.pathname : `#${name}`);
 }
@@ -66,7 +90,7 @@ addEventListener('pointerdown', unlockAudio, { once: false, passive: true });
 // ---------- Lobby ----------
 mountMascot($('#lobby-mascot'), 'lobby');
 function lobbyGreet() {
-  updateBalance();
+  updateBalance(); refreshLobby();
   $('.js-ach-count').textContent = `${achCount()}/${ACHIEVEMENTS.length}`;
   const h = new Date().getHours();
   const key = store.d.balance >= 5000 ? 'lobbyRich' : store.d.balance < 100 ? 'lobbyBroke' : (h >= 23 || h < 5) ? 'lobbyNight' : 'lobby';
@@ -83,6 +107,8 @@ function pokeable(slot, name, ctxKey, onPoke) {
 }
 pokeable($('#lobby-mascot'), 'lobby', 'pokeLobby');
 pokeable($('#bj-dealer'), 'bj', 'pokeBj');
+pokeable($('#hl-dealer'), 'hl');
+pokeable($('#vp-dealer'), 'vp');
 pokeable($('#sol-mascot'), 'sol', 'pokeSol', () => {
   const m = $('#sol-mascot'); m.classList.add('peek');
   clearTimeout(m._peekT); m._peekT = setTimeout(() => m.classList.remove('peek'), 6000);
@@ -105,9 +131,21 @@ function openSheet(kind) {
   if (kind === 'settings') { $('#sheet-title').textContent = 'Einstellungen'; body.innerHTML = settingsHTML(); bindSettings(body); }
   if (kind === 'stats') { $('#sheet-title').textContent = 'Statistik'; body.innerHTML = statsHTML(); }
   if (kind === 'achievements') { $('#sheet-title').textContent = 'Erfolge'; body.innerHTML = achHTML(); }
+  if (kind === 'shop') { $('#sheet-title').textContent = 'Upgrade-Shop'; body.innerHTML = shopHTML(); bindShop(body, SHOP_HOOKS); }
   sheet.classList.add('show'); backdrop.classList.add('show');
   setTimeout(() => $('#sheet-close').focus({ preventScroll: true }), 50);
 }
+const SHOP_SAY = {
+  games: 'Ein neues Spiel? Mehr Wege, mir deine Chips zu geben. Ich liebe es.',
+  felt: 'Neuer Filz! Riecht noch nach Gruft. Herrlich.',
+  back: 'Hübsche Rückseite. Ändert nichts daran, dass ich gewinne.',
+  perks: 'Investiert in Luxus. Sehr vernünftig. Für mich.',
+};
+const SHOP_HOOKS = {
+  onBought: () => { refreshLobby(); updateBalance(); },
+  onPlay: id => { closeSheet(); go(Object.keys(GAMES).find(g => GAMES[g] === id)); },
+  say: i => say({ lobby: 'lobby', blackjack: 'bj', solitaire: 'sol', hilo: 'hl', poker: 'vp' }[current], SHOP_SAY[i.cat], { mood: 'love', priority: 3 }),
+};
 function closeSheet() { sheet.classList.remove('show'); backdrop.classList.remove('show'); }
 $('#sheet-close').addEventListener('click', closeSheet);
 backdrop.addEventListener('click', closeSheet);
@@ -134,7 +172,7 @@ function settingsHTML() {
   <div class="set-group">Darstellung</div>
   ${sw('motion', 'Animationen & Effekte', 'Aus: ruhiger, spart Akku')}
   <div class="set-group">Daten</div>
-  <button class="danger" id="reset-all">Alles zurücksetzen (Guthaben, Statistik, Erfolge)</button>
+  <button class="danger" id="reset-all">Alles zurücksetzen (Guthaben, Statistik, Erfolge, Käufe)</button>
   <p style="font-size:13px;color:var(--text-dim);margin-top:14px">Eigene Bilder: Lege <b>kortomi.png</b> oder <b>kartenruecken.png</b> in den Ordner <i>assets/custom</i>. Sie ersetzen dann die eingebauten Grafiken.</p>`;
 }
 function bindSettings(root) {
@@ -152,11 +190,11 @@ function bindSettings(root) {
     store.d.settings[k] = k === 'draw3' ? v === 1 : v;
     seg.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x === b));
     store.save(); applySettings(); solitaireSettingChanged();
-    if (k === 'voicePitch') say({ lobby: 'lobby', blackjack: 'bj', solitaire: 'sol' }[current], 'So klinge ich jetzt. Gefällt’s dir?', { mood: 'wink', priority: 3 });
+    if (k === 'voicePitch') say({ lobby: 'lobby', blackjack: 'bj', solitaire: 'sol', hilo: 'hl', poker: 'vp' }[current], 'So klinge ich jetzt. Gefällt’s dir?', { mood: 'wink', priority: 3 });
     else sfx.tap();
   }));
   root.querySelector('#reset-all').addEventListener('click', () => {
-    if (!confirm('Wirklich alles zurücksetzen? Guthaben, Statistik und Erfolge gehen verloren.')) return;
+    if (!confirm('Wirklich alles zurücksetzen? Guthaben, Statistik, Erfolge und Shop-Käufe gehen verloren.')) return;
     store.reset(); applySettings(); updateBalance(); closeSheet();
     toast('Alles zurückgesetzt', `Neues Startguthaben: ${fmt(START_BALANCE)}`);
     setTimeout(() => location.reload(), 900);
@@ -175,7 +213,19 @@ function statsHTML() {
     ${st(fmt(b.gifts), 'Mitleids-Chips')}</div></div>
     <div class="stat-block"><h3>Solitaire</h3><div class="stat-grid">
     ${st(fmt(s.played), 'Spiele')}${st(fmt(s.won), 'Gewonnen')}${st(pct(s.won, s.played), 'Quote')}
-    ${st(t(s.bestTime), 'Bestzeit')}${st(fmt(s.bestScore), 'Höchste Punktzahl')}${st(fmt(s.bestStreak), 'Längste Serie')}</div></div>`;
+    ${st(t(s.bestTime), 'Bestzeit')}${st(fmt(s.bestScore), 'Höchste Punktzahl')}${st(fmt(s.bestStreak), 'Längste Serie')}</div></div>${extraStats()}`;
+}
+
+function extraStats() {
+  const st = (v, l) => `<div class="stat"><b>${v}</b><span>${l}</span></div>`;
+  const h = store.d.stats.hl, v = store.d.stats.vp;
+  const best = { royal: 'Royal Flush', sflush: 'Straight Flush', quads: 'Vierling', full: 'Full House', flush: 'Flush', straight: 'Straße', trips: 'Drilling', twopair: 'Zwei Paare', jacks: 'Buben+' };
+  let out = '';
+  if (owns('game_hilo')) out += `<div class="stat-block"><h3>Höher oder Tiefer</h3><div class="stat-grid">
+    ${st(fmt(h.rounds), 'Runden')}${st(fmt(h.cashouts), 'Kassiert')}${st(fmt(h.bestStreak), 'Längste Trefferserie')}${st(fmt(h.biggestWin), 'Größter Gewinn')}</div></div>`;
+  if (owns('game_poker')) out += `<div class="stat-block"><h3>Video-Poker</h3><div class="stat-grid">
+    ${st(fmt(v.hands), 'Hände')}${st(fmt(v.wins), 'Gewonnen')}${st(best[v.best] || '–', 'Beste Hand')}${st(fmt(v.biggestWin), 'Größter Gewinn')}</div></div>`;
+  return out;
 }
 
 function achHTML() {
@@ -199,12 +249,14 @@ if ('serviceWorker' in navigator && location.protocol !== 'file:') {
   updateBalance();
   checkNightOwl();
   const start = location.hash.slice(1);
-  if (start === 'blackjack' || start === 'solitaire') go(start);
+  if (start === 'blackjack' || start === 'solitaire' || (GAMES[start] && owns(GAMES[start]))) go(start);
   else lobbyGreet();
   // Plaudern in regelmäßigen Abständen, auch während gespielt wird
   startIdleChatter(() => {
     if (current === 'lobby') return { name: 'lobby', key: 'idleLobby' };
     if (current === 'blackjack') return { name: 'bj', key: 'idleBj' };
+    if (current === 'hilo') return { name: 'hl', key: 'idle' };
+    if (current === 'poker') return { name: 'vp', key: 'idle' };
     if (current === 'solitaire') {
       if (!store.d.settings.mascotSol) return null;
       const m = document.getElementById('sol-mascot');
