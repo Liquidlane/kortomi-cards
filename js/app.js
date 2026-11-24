@@ -3,7 +3,7 @@ import { buildSprite, icon, useCard, medalSVG, chipSVG } from './art.js';
 import { unlockAudio, configureAudio, sfx } from './audio.js';
 import { store, ACHIEVEMENTS, achCount, setUnlockHandler, checkNightOwl, START_BALANCE, owns } from './store.js';
 import { mountClerk, hideClerk } from './clerk.js';
-import { mountMascot, say, pick, detectCustomMascot, hideBubble, setMood, startIdleChatter, poke } from './mascot.js';
+import { showDealerName, mountMascot, say, pick, detectCustomMascot, hideBubble, setMood, startIdleChatter, poke } from './mascot.js';
 import { detectCustomBack } from './cards.js';
 import { initParallax, setReduced, celebrate } from './fx.js';
 import { fmt, updateBalance, toast } from './ui.js';
@@ -57,7 +57,7 @@ function refreshLobby() {
 $('#daily-btn').addEventListener('click', () => {
   if (!claimDaily()) return;
   sfx.sparkle(); toast(`+${DAILY_AMOUNT} Chips`, 'Kortomis Tagesgeld. Gib’s nicht gleich aus.');
-  say('lobby', 'Hier. Dein Taschengeld. Und jetzt verspiel es brav bei mir.', { mood: 'wink', priority: 3 });
+  say('lobby', pick('dailyGift'), { mood: 'wink', priority: 3 });
   refreshLobby();
 });
 
@@ -184,7 +184,7 @@ function bindSettings(root) {
     store.d.settings[k] = k === 'draw3' ? v === 1 : v;
     seg.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x === b));
     store.save(); applySettings(); solitaireSettingChanged();
-    if (k === 'voicePitch') say({ lobby: 'lobby', blackjack: 'bj', solitaire: 'sol', hilo: 'hl', poker: 'vp' }[current], 'So klinge ich jetzt. Gefällt’s dir?', { mood: 'wink', priority: 3 });
+    if (k === 'voicePitch') say({ lobby: 'lobby', blackjack: 'bj', solitaire: 'sol', hilo: 'hl', poker: 'vp' }[current], pick('voiceTest'), { mood: 'wink', priority: 3 });
     else sfx.tap();
   }));
   root.querySelector('#reset-all').addEventListener('click', () => {
@@ -240,6 +240,7 @@ if ('serviceWorker' in navigator && location.protocol !== 'file:') {
   initParallax();
   await Promise.all([detectCustomMascot(), detectCustomBack()]);
   mountMascot($('#lobby-mascot'), 'lobby');
+  showDealerName();
   updateBalance();
   checkNightOwl();
   const start = location.hash.slice(1);

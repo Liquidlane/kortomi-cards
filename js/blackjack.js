@@ -366,7 +366,7 @@ async function afterInsurance() {
       hands[0].done = true;
       return settle();
     }
-    if (insurance) { say(M, 'Kein Blackjack. Deine Versicherung gehört jetzt mir.', { mood: 'smug', priority: 2 }); insurance = 0; renderBet(); }
+    if (insurance) { say(M, pick('bjInsLost'), { mood: 'smug', priority: 2 }); insurance = 0; renderBet(); }
     else if (up.rank === 1) say(M, pick('bjNoBJ'), { mood: 'idle', priority: 1 });
     setMood(M, 'idle');
   }
@@ -615,8 +615,8 @@ function hint() {
     say(M, pick('bjTipBook', { a: MOVE_NAME[m] }), { mood: 'wink', priority: 3 });
     const label = { H: 'Ziehen', S: 'Halten', D: 'Verdoppeln', P: 'Teilen' }[m];
     [...actions.children].forEach(b => { if (b.textContent.startsWith(label)) { b.animate([{ transform: 'scale(1)' }, { transform: 'scale(1.12)' }, { transform: 'scale(1)' }], { duration: 500, iterations: 2 }); } });
-  } else if (phase === 'insurance') say(M, 'Versicherung lohnt sich auf Dauer nicht. Sagt das Buch. Ich sag gar nix.', { mood: 'wink', priority: 3 });
-  else say(M, 'Setz nur, was du verkraften kannst. Also… Chips. Es sind nur Chips.', { mood: 'wink', priority: 3 });
+  } else if (phase === 'insurance') say(M, pick('bjTipIns'), { mood: 'wink', priority: 3 });
+  else say(M, pick('bjTipBet'), { mood: 'wink', priority: 3 });
 }
 
 // ---------- Init ----------

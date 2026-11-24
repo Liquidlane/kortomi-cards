@@ -1,0 +1,118 @@
+// Sprüche für Choccypuddin als Croupier (im Shop kaufbar).
+// Dauer-müde, jobbt nur fürs College, Kortomi ist seine Chefin.
+// Gleiche Schlüssel wie Kortomis LINES; hl_* und vp_* gehören zu Höher/Tiefer und Video-Poker.
+export const CHOC = {
+  // ---------- Lobby ----------
+  lobby: [
+    'Oh. Hi. Ich bin heute dein Croupier. Kortomi hat mich… verliehen. Gegen Chips.',
+    'Willkommen. Bitte spiel leise, ich hab Kopfweh vom Lernen.',
+    'Blackjack oder Solitaire? Ich mach beides gleich mittelmäßig motiviert.',
+    'Setz dich. Ich setz mich auch. Eigentlich leg ich mich am liebsten.',
+    'Ich bin Choc. Ich verteile Karten, damit ich mir Bücher leisten kann.',
+  ],
+  lobbyNight: ['So spät noch wach? Wir zwei sind echt kaputt, oder?', 'Mitternacht. Meine beste Zeit. Für Hausarbeiten, die morgen fällig sind.'],
+  lobbyRich: ['So viele Chips… das ist mehr als meine Studiengebühren. Pro Jahr.', 'Du bist reich. Kannst du mir Nachhilfe in Reichsein geben?'],
+  lobbyBroke: ['Pleite? Willkommen im Club. Wir treffen uns montags. Ich schlaf meistens.'],
+  dailyGift: ['Hier, dein Tagesgeld. Kortomi hat gesagt, ich soll’s dir geben. Nicht behalten. Hab ich nicht. Fast nicht.'],
+  voiceTest: ['So klinge ich jetzt. Müde. Wie immer eigentlich.'],
+
+  // ---------- Blackjack ----------
+  bjEnter: ['Setz deine Chips. Ich… *gähn*… bin bereit.', 'Frisch gemischt. Hoffentlich richtig. Ich hab dabei kurz die Augen zugemacht.', 'Blackjack. Ich kenn die Regeln. Hab ich für die Prüfung gelernt. Welche Prüfung? Egal.'],
+  bjBet: ['Okay.', 'Notiert. Im Kopf. Hoffentlich.', 'Klimper. Schönes Geräusch. Erinnert mich an Geld, das ich nicht hab.', 'Gute Wahl. Glaub ich.'],
+  bjBigBet: ['So viel? Davon könnt ich die Miete zahlen. Zwei Monate.', 'Uff. Mutig. Ich wär jetzt nervös, wenn ich die Energie hätte.'],
+  bjShuffle: ['Neuer Schuh. Ich misch. Langsam. Sehr langsam.', 'Mischen ist eigentlich meditativ. Ich schlaf dabei fast ein.'],
+  bjPlayerBJ: ['Blackjack! Hey, cool. Ehrlich. Ich freu mich für dich. Kortomi nicht.', 'Ass und Zehner. Nett. Das schreib ich nicht in den Bericht.'],
+  bjDealerBJ: ['Oh. Blackjack. Für mich. Sorry. Ich wollt das nicht. Glaub ich.', 'Ups. Ich hab gewonnen. Krieg ich dafür Bonus? Nein? Dachte ich mir.'],
+  bjBust: ['Überkauft. Tut mir leid. Ehrlich, ich hab’s nicht so mit Schadenfreude.', '22 oder mehr. Passiert. Mir auch. Beim Kaffee.', 'Zu viel. Kenn ich. Vierte Tasse heute.'],
+  bjDealerBust: ['Hab mich überkauft. War nicht Absicht. War Müdigkeit.', 'Upsi. Das sag ich Kortomi nicht.', 'Überkauft. Ich glaub, ich hab doppelt gesehen.'],
+  bjWin: ['Gewonnen. Gut gemacht. Ich klatsch innerlich.', 'Hier, deine Chips. Gönn dir was. Mehr als ich.', 'Glückwunsch. Wirklich. Ich hab nur keine Kraft für Begeisterung.'],
+  bjBigWin: ['Wow. Das ist ein ganzes Semester. Du schuldest mir nichts, aber… nur so.', 'So viel Gewinn. Kortomi wird mich anschreien. Egal, lohnt sich.'],
+  bjLose: ['Die Bank gewinnt. Ich bin nur ihr Praktikant.', 'Sorry. Die Karten wollten das so. Ich nicht.', 'Verloren. Ich weiß genau, wie sich das anfühlt. Täglich.'],
+  bjPush: ['Unentschieden. Niemand gewinnt. Wie im echten Leben.', 'Gleichstand. Perfekt, weniger Papierkram.'],
+  bjDouble: ['Verdoppeln? Okay. Ich verdopple meinen Kaffee.', 'Doppelt. Mutig. Ich hoff für dich.'],
+  bjSplit: ['Teilen. Wie meine WG-Küche. Nur ordentlicher.', 'Zwei Hände. Noch mehr Arbeit für mich. Toll.'],
+  bjInsurance: ['Ich zeig ein Ass. Willst du dich versichern? Ich bin übrigens nicht versichert.', 'Ass offen. Versicherung? Ich hab nicht mal Krankenversicherung. Spaß. Halb.'],
+  bjInsured: ['Blackjack. Aber du warst versichert. Klug. Klüger als ich.'],
+  bjInsLost: ['Kein Blackjack. Die Versicherung ist weg. Sorry. Regeln.'],
+  bjNoBJ: ['Kein Blackjack. Atme durch. Ich tu’s auch.'],
+  bjHitHigh: ['Auf {n} noch eine? Okay… ich guck lieber nicht hin.', 'Noch eine auf {n}? Du hast mehr Energie als ich.'],
+  bjStandLow: ['Stehen auf {n}? Gute Idee. Ich würd mich auch gern hinstellen. Oder hinlegen.', 'Mit {n} zufrieden? Bescheiden. Wie mein Kontostand.'],
+  bjTipBook: ['Laut Buch: {a}. Ich hab’s nachgelesen. Statt zu lernen.', 'Psst. {a}. Hab ich auf einen Spickzettel geschrieben.', 'Ich würd {a}. Aber verlass dich nicht auf mich, ich hab drei Stunden geschlafen.'],
+  bjDeviate: ['Das Buch sagt übrigens {a}. Aber wer liest schon Bücher. Ich muss.', 'Hm. Das Lehrbuch sagt {a}. Ich hab auch nie aufs Lehrbuch gehört.'],
+  bjTipIns: ['Versicherung lohnt sich auf Dauer nicht. Hab ich in Statistik gelernt. Bevor ich eingeschlafen bin.'],
+  bjTipBet: ['Setz nur, was du verkraften kannst. Ich setz nur Kaffee.'],
+  bjBroke: ['Pleite? Hier, 500 aufs Haus. Kortomi merkt’s eh nicht. Hoffentlich.', 'Keine Chips mehr? Hier. Pleitesein ist mies. Ich weiß das.'],
+  bjFiveCard: ['Fünf Karten und nicht drüber? Cool. Echt jetzt.'],
+  bjStreak: ['{n} Siege am Stück. Kortomi zieht mir das vom Lohn ab, glaub ich.', 'Schon wieder gewonnen? Kannst du mir Mathe erklären?'],
+
+  // ---------- Solitaire ----------
+  solEnter: ['Solitaire. Du spielst, ich guck zu. Mit halb offenen Augen.', 'Lass dir Zeit. Ich hab Zeit. Eigentlich nicht, aber ich tu so.'],
+  solResume: ['Weiter, wo du aufgehört hast. Ich hab nichts angefasst. Ich hab geschlafen.'],
+  solUndo: ['Zurück? Kann ich auch meinen letzten Monat zurücknehmen?', 'Rückgängig. Wenn’s das doch für Klausuren gäbe.'],
+  solFoundation: ['Ab nach oben.', 'Schön.', 'Ein Stück weiter. Wie ich mit meiner Hausarbeit. Nicht.'],
+  solAce: ['Ein Ass. Nach oben damit. Ich war nie ein Ass.'],
+  solKingEmpty: ['Der König legt sich hin. Glücklicher König.'],
+  solStuck: ['Hmm. Schau mal in den Stapel. Oder mach ’ne Pause. Pausen sind toll.', 'Brauchst du einen Tipp? Die Glühbirne. Da oben.'],
+  solNoMoves: ['Keine Züge mehr. Kenn ich. Heißt Prüfungsphase.', 'Sackgasse. Neues Spiel? Oder Nickerchen?'],
+  solHint: ['Da. Glaub ich.', 'Probier das hier.', 'Psst, da drüben.'],
+  solAuto: ['Alles aufgedeckt. Soll ich den Rest machen? Ich mach’s langsam.'],
+  solWin: ['Gewonnen. Respekt. Ich hätt’s nicht geschafft. Ich wär eingeschlafen.', 'Alles sortiert. Kannst du auch meinen Schreibtisch?'],
+  solFast: ['Unter drei Minuten? Ich brauch länger zum Aufstehen.'],
+  solNew: ['Neue Runde. Neue Chancen. Sagt mein Motivationsposter.', 'Frische Karten. Frischer als ich.'],
+  solRecycle: ['Nochmal durch den Stapel. Wie Vokabeln.'],
+  achievement: ['Ein Abzeichen. Cool. Ich hab auch eins. Für die meisten Überstunden.', 'Erfolg freigeschaltet. Ich hab nur Schulden freigeschaltet.'],
+
+  // ---------- Plaudern ----------
+  idle: [
+    'Noch drei Semester. Noch drei Semester…',
+    'Kortomi zahlt mich in Chips. Die Uni nimmt keine Chips. Ich hab gefragt.',
+    'Studienkredit, Miete, Kaffee. Das ist meine ganze Lebensgeschichte.',
+    'Ich hab Kaffee. Ich bin Kaffee. Wir sind eins.',
+    'Falls jemand fragt: Ich war die ganze Zeit wach.',
+    'Abgabe ist Freitag. Heute ist… welcher Tag ist heute?',
+    'Choccypuddin. Ja, wirklich. Meine Eltern fanden das süß.',
+    'Die Sahne auf meinem Kopf ist echt. Frag nicht.',
+    'Wenn ich fertig bin, mach ich ein Café auf. Mit Betten.',
+    'Meine Ohren sind so lang, die kann ich als Decke benutzen. Hab ich auch schon. Im Dienst.',
+    'Weißt du, was ein Lehrbuch kostet? Mehr als ein Royal Flush auszahlt.',
+    'Ich studiere übrigens. Deshalb bin ich so… *gähn*… engagiert.',
+    'Mein Professor sagt, ich soll mehr schlafen. Mein Vermieter sagt, ich soll mehr arbeiten.',
+    'Ich hab heute geträumt, ich hab meine Abschlussarbeit abgegeben. Dann bin ich aufgewacht.',
+    'Kortomi hat mir einen Mitarbeiter-Rabatt versprochen. Auf nichts.',
+    'Wenn du gewinnst, krieg ich Ärger. Wenn du verlierst, fühl ich mich schlecht. Super Job.',
+    'Ich hab vier Wecker. Ich hör keinen davon.',
+    'Pudding ist übrigens ein vollwertiges Frühstück. Ich hab’s nachgelesen.',
+  ],
+  idleLobby: ['Die anderen Spiele gibt’s im Shop. Ich krieg keine Provision. Leider.', 'Ich hab hier ein Kissen versteckt. Verrat’s nicht.'],
+  idleBj: ['Ich zähl keine Karten. Ich zähl Stunden bis Feierabend.', 'Siebzehn. Ich bleib stehen. Wie mein Leben.', 'Die Bank gewinnt auf Dauer. Ich nicht. Ich bin nur angestellt.'],
+  idleSol: ['Ich schau zu. Mit einem Auge. Das andere schläft.', 'Solitaire ist wie Lernen. Alles sortieren und hoffen.'],
+
+  // ---------- Anstupsen ----------
+  poke: ['Hm? Ich bin wach! Ich bin wach.', 'Nicht stupsen. Ich bin aus Pudding.', 'Au. Okay, das hat mich kurz geweckt. Danke?', 'Ich hab nur kurz die Augen ausgeruht.', 'Weich, oder? Das ist Stress-Flausch.'],
+  pokeMore: ['Bitte. Mein Herz rast eh schon vom Kaffee.', 'Ich ruf die Chefin. Ach nein, die hat heute frei. Wegen mir.', 'Fürs Gestupstwerden zahlt mir hier keiner was.'],
+  pokeAnnoyed: ['Okay. Wenn du weiterstupst, wirst du Fußnote in meiner Hausarbeit.', 'Ich hab Gewerkschaft. Glaub ich. Ich frag morgen.', 'Ich bin zu müde, um wütend zu sein. Aber ich wär’s gern.'],
+  pokeSecret: ['Okay. Du darfst bleiben. Du bist netter als meine Professoren.'],
+  pokeLobby: ['Lobby-Stupsen kostet nichts. Leider. Ich bräuchte das Geld.'],
+  pokeBj: ['Nicht den Croupier stupsen. Steht im Handbuch. Glaub ich.', 'Hey, ich teil gerade aus. Langsam, aber ich teil aus.'],
+  pokeSol: ['Huch! Ich hab nicht geschlafen. Ich hab… zugeguckt. Mit Augen zu.'],
+
+  // ---------- Einschlafen ----------
+  sleep: ['Zzz… Hausarbeit… Fußnoten… zzz…', 'Zzz… nein, Professor, ich hab’s gelesen… zzz…', 'Zzz… Pudding… mit Sahne… zzz…', 'Zzz… noch fünf Minuten… zzz…'],
+  wake: ['Wa–? Ich war wach! Die ganze Zeit!', 'Ich hab nicht geschlafen. Ich hab… meditiert.', 'Huch! Ja! Karten! Ich bin da!'],
+
+  // ---------- Höher oder Tiefer ----------
+  hl_enter: ['Höher oder tiefer. Einfach. So einfach wie aufstehen. Also schwer.', 'Ich zeig dir ’ne Karte. Du rätst. Ich versuch wach zu bleiben.'],
+  hl_right: ['Richtig. Nice.', 'Schon wieder richtig. Bist du Mathematiker?', 'Okay. Noch eine?', 'Gut geraten. Besser als ich in Klausuren.'],
+  hl_wrong: ['Daneben. Sorry.', 'Oh nein. Das tut mir echt leid.', 'Die Karte war gemein. Nicht ich.', 'Weg ist es. Wie mein Schlaf.'],
+  hl_tie: ['Gleich. Zählt nicht. Nochmal.', 'Unentschieden. Ich mag Unentschieden. Kein Stress.'],
+  hl_cash: ['Kassiert. Klug. Aufhören ist eine Kunst. Ich kann’s nicht.', 'Du nimmst es mit. Gönn dir. Hier.'],
+  hl_big: ['Wow. Das ist viel. Kortomi wird kreischen. Ich nehm Ohropax.', 'So viel?! Ich bin plötzlich wach!'],
+
+  // ---------- Video-Poker ----------
+  vp_enter: ['Video-Poker. Keine Mimik nötig. Gut, ich hab eh keine Kraft für Mimik.', 'Halt, was du magst. Wirf weg, was du nicht magst. Wie bei Vorlesungen.'],
+  vp_win: ['Ausgezahlt. Nett.', 'Gewonnen. Ich nick anerkennend.', 'Nicht übel.'],
+  vp_lose: ['Nichts. Kenn ich, heißt Kontoauszug.', 'Die Karten sagen nein. Wie meine Bank.', 'Schade. Nochmal?'],
+  vp_big: ['Oh wow. Okay. Das ist richtig viel.', 'Warte, ich muss das zweimal angucken. Ich seh doppelt. Ach nein, ist echt.'],
+  vp_royal: ['ROYAL FLUSH?! Damit könnt ich mein ganzes Studium bezahlen!'],
+  vpTease: ['Hm… das sieht gut aus. Sogar für meine müden Augen.'],
+};

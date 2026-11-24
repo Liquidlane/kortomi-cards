@@ -1,11 +1,14 @@
 // Upgrade-Shop: Mit Chips neue Spiele, Tischfilze, Kartenrücken und Extras kaufen.
 import { store, owns, unlock } from './store.js';
-import { cardBackSVG, setCardBack, chipSVG, useCard, icon } from './art.js';
+import { cardBackSVG, setCardBack, chipSVG, useCard, icon, kortomiSVG } from './art.js';
+import { remountAll } from './mascot.js';
 import { sfx } from './audio.js';
 import { fmt, updateBalance, toast } from './ui.js';
 import { burst } from './fx.js';
-import { clerkHTML, clerkEvent } from './clerk.js';
+import { clerkHTML, clerkEvent, chocSVG } from './clerk.js';
 
+// Figur-Vorschau mit eigenen Verlauf-IDs, damit sie nicht mit den Tisch-Figuren kollidiert
+const figure = (svg, tag) => svg.replace(/id="k-([\w-]+)"/g, `id="k-$1-${tag}"`).replace(/url\(#k-([\w-]+)\)/g, `url(#k-$1-${tag})`);
 const mini = (id, x, y, r) => `<span class="mini" style="left:${x}%;top:${y}%;transform:rotate(${r}deg)">${useCard(id)}</span>`;
 
 // Katalog. `free` = von Anfang an da (Standardlook).
@@ -14,6 +17,12 @@ export const CATALOG = [
     key: 'games', title: 'Spiele', items: [
       { id: 'game_hilo', name: 'Höher oder Tiefer', price: 2000, desc: 'Rate die nächste Karte. Jeder Treffer erhöht den Multiplikator – kassier, bevor es kracht.', art: () => mini('7H', 8, 10, -10) + mini('back', 46, 4, 8) },
       { id: 'game_poker', name: 'Video-Poker', price: 5000, desc: 'Jacks or Better: fünf Karten, halten, nachziehen. Royal Flush zahlt 250-fach.', art: () => mini('1S', 2, 10, -12) + mini('13S', 30, 4, -2) + mini('12S', 58, 10, 9) },
+    ],
+  },
+  {
+    key: 'dealer', title: 'Croupier', items: [
+      { id: 'dealer_kortomi', look: 'kortomi', name: 'Kortomi', price: 0, free: true, desc: 'Die Chefin persönlich. Frech, gierig, hellwach.', art: () => `<span class="shop-dealer">${figure(kortomiSVG(), 'sk')}</span>` },
+      { id: 'dealer_choc', look: 'choc', name: 'Choccypuddin', price: 4000, desc: 'Choc aus der Nachtschicht teilt aus. Dauer-müde, jobbt fürs College, nickt am Tisch gern mal ein.', art: () => `<span class="shop-dealer choc-bg">${figure(chocSVG(), 'sc')}</span>` },
     ],
   },
   {
@@ -72,7 +81,7 @@ function preview(i) {
 function actionBtn(i) {
   const bal = store.d.balance;
   if (has(i)) {
-    if (i.cat === 'felt' || i.cat === 'back') {
+    if (i.look) {
       const on = store.d.look[i.cat] === i.look;
       return on ? `<button class="shop-btn on" disabled>${icon('check')}Aktiv</button>`
         : `<button class="shop-btn use" data-use="${i.id}">Benutzen</button>`;
@@ -114,6 +123,7 @@ export function bindShop(root, { onBought, onPlay, onLook }) {
     if (b.dataset.use) {
       const i = item(b.dataset.use);
       store.d.look[i.cat] = i.look; store.save();
+      if (i.cat === 'dealer') remountAll();
       applyLook(); sfx.tap(); rerender(); onLook?.(i); clerkEvent('use', i);
       return;
     }
@@ -136,7 +146,8 @@ export function bindShop(root, { onBought, onPlay, onLook }) {
     const r = b.getBoundingClientRect();
     store.d.balance -= i.price;
     store.d.owned[i.id] = Date.now();
-    if (i.cat === 'felt' || i.cat === 'back') store.d.look[i.cat] = i.look; // Neues gleich anziehen
+    if (i.look) store.d.look[i.cat] = i.look; // Neues gleich anziehen
+    if (i.cat === 'dealer') remountAll();
     store.save(true);
     updateBalance(true); applyLook();
     sfx.sparkle(); burst(r.left + r.width / 2, r.top + r.height / 2, { n: 34, kinds: ['confetti', 'heart'], power: 7 });

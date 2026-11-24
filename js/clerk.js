@@ -72,18 +72,18 @@ export function chocSVG() {
       <!-- Wangen -->
       <ellipse cx="70" cy="158" rx="13" ry="7" fill="#ffb3cf" opacity=".75"/><ellipse cx="170" cy="158" rx="13" ry="7" fill="#ffb3cf" opacity=".75"/>
       <!-- Augen je Stimmung -->
-      <g class="mood idle">${bags}<g class="c-blink">${eye(92, 9)}${eye(148, 9)}</g></g>
-      <g class="mood yawn">${bags}${shut(92)}${shut(148)}</g>
+      <g class="mood idle think">${bags}<g class="c-blink">${eye(92, 9)}${eye(148, 9)}</g></g>
+      <g class="mood yawn smug">${bags}${shut(92)}${shut(148)}</g>
       <g class="mood sleep">${bags}${shut(92)}${shut(148)}</g>
-      <g class="mood happy">${bags}${happy(92)}${happy(148)}</g>
+      <g class="mood happy wink">${bags}${happy(92)}${happy(148)}</g>
       <g class="mood shock">${bags}${eye(92, 0)}${eye(148, 0)}</g>
       <g class="mood sad">${bags}${eye(92, 6)}${eye(148, 6)}<path d="M78 118 l24 6 M162 118 l-24 6" stroke="#b9a3d6" stroke-width="3" stroke-linecap="round"/></g>
       <g class="mood love">${bags}${heart(92)}${heart(148)}</g>
       <!-- Mund -->
-      <g class="mood idle happy love"><path d="M112 162 q4 5 8 0 q4 5 8 0" stroke="#2f4d8a" stroke-width="2.6" fill="none" stroke-linecap="round"/></g>
+      <g class="mood idle think happy wink love"><path d="M112 162 q4 5 8 0 q4 5 8 0" stroke="#2f4d8a" stroke-width="2.6" fill="none" stroke-linecap="round"/></g>
       <g class="mood sad"><path d="M112 166 q8 -6 16 0" stroke="#2f4d8a" stroke-width="2.6" fill="none" stroke-linecap="round"/></g>
       <g class="mood shock"><ellipse cx="120" cy="166" rx="5" ry="6" fill="#4e2a1a"/></g>
-      <g class="mood yawn"><ellipse cx="120" cy="168" rx="9" ry="12" fill="#4e2a1a"/><ellipse cx="120" cy="174" rx="6" ry="4" fill="#ff8fb0"/></g>
+      <g class="mood yawn smug"><ellipse cx="120" cy="168" rx="9" ry="12" fill="#4e2a1a"/><ellipse cx="120" cy="174" rx="6" ry="4" fill="#ff8fb0"/></g>
       <g class="mood sleep"><path d="M114 164 q6 3 12 0" stroke="#2f4d8a" stroke-width="2.6" fill="none" stroke-linecap="round"/><circle class="c-bubble" cx="132" cy="168" r="5" fill="#cfe6ff" stroke="#8ec5ff" stroke-width="1.5"/>
         <g class="c-zzz" font-family="Fredoka, sans-serif" font-weight="700" fill="#cfe6ff"><text x="190" y="84" font-size="22">Z</text><text x="208" y="62" font-size="16">z</text><text x="220" y="46" font-size="12">z</text></g></g>
     </g>
@@ -150,6 +150,9 @@ const L = {
     ],
     sleep: ['Zzz… Hausarbeit… Fußnoten… zzz…', 'Zzz… nein, Professor, ich hab’s gelesen… zzz…', 'Zzz… Pudding… mit Sahne… zzz…', 'Zzz… noch fünf Minuten… zzz…'],
     wake: ['Wa–? Willkommen! Ich war hier. Die ganze Zeit.', 'Ich hab nicht geschlafen. Ich hab… meditiert.', 'Huch! Ja! Upgrade-Shop! Was darf’s sein?'],
+    dealer: ['Du hast… mich gebucht? Als Croupier? Krieg ich jetzt mehr Gehalt? Nein? Okay.', 'Ich teil jetzt auch tagsüber aus? Für die Studiengebühren. Für die Studiengebühren.'],
+    dealer_choc: ['Ich bin wieder am Tisch. Hab extra einen fünften Kaffee getrunken.', 'Croupier Choc meldet sich zum Dienst. Halbwach, aber da.'],
+    dealer_kortomi: ['Kortomi teilt wieder aus? Gut. Mehr Zeit zum Lernen. Oder Schlafen.', 'Ich geh dann zurück an die Kasse. Und auf mein Kissen.'],
     swapIn: ['Was? Ich hab doch Nachtschicht… Na gut. Für die Studiengebühren.', 'Schichttausch? Kriege ich Zuschlag? Nein? Dachte ich mir.'],
   },
   kortomi: {
@@ -177,6 +180,9 @@ const L = {
       'Ich zahl Choc in Chips. Großzügig, oder?',
       'Alles hier ist ein Schnäppchen. Für mich.',
     ],
+    dealer: ['Du willst den Pudding statt mir am Tisch? …Fein. Ich zieh’s ihm vom Lohn ab.', 'Choc als Croupier. Na gut. Schlaf nicht ein, wenn er einschläft.'],
+    dealer_choc: ['Choc teilt wieder aus. Weck ihn, wenn er wegpennt.'],
+    dealer_kortomi: ['Endlich wieder ich am Tisch. Ich hab dich vermisst. Und deine Chips.', 'Die Chefin ist zurück. Wie es sich gehört.'],
     swapIn: ['Choc ist auf dem Tresen eingeschlafen. Ich übernehme.', 'Schichtwechsel. Der Pudding hat Pause.'],
   },
 };
@@ -328,7 +334,7 @@ export function clerkEvent(type, i) {
   const w = c.w;
   if (type === 'buy') { talk(pick(w, i.cat), { mood: w === 'choc' ? 'happy' : 'love', force: true }); jump(); }
   if (type === 'short') talk(pick(w, 'short'), { mood: 'sad', force: true });
-  if (type === 'use') talk(pick(w, 'use'), { mood: w === 'choc' ? 'happy' : 'wink', force: true });
+  if (type === 'use') talk(pick(w, i.cat === 'dealer' ? `dealer_${i.look}` : 'use'), { mood: w === 'choc' ? 'happy' : 'wink', force: true });
   if (type === 'arm' && Math.random() < 0.6) talk(pick(w, 'arm'), { mood: w === 'choc' ? 'yawn' : 'smug' });
 }
 

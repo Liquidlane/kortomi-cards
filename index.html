@@ -61,7 +61,7 @@
           <button class="pick pick-bj" data-go="blackjack">
             <span class="pick-art" id="pick-art-bj"></span>
             <span class="pick-name">Blackjack</span>
-            <span class="pick-desc">Gegen Kortomi, 3 zu 2</span>
+            <span class="pick-desc">Gegen <span class="js-dealer-name">Kortomi</span>, 3 zu 2</span>
           </button>
           <button class="pick pick-sol" data-go="solitaire">
             <span class="pick-art" id="pick-art-sol"></span>
@@ -95,7 +95,7 @@
         <button class="icon-btn back" data-go="lobby" aria-label="Zur Lobby"></button>
         <div class="balance-pill"><span class="chip-ico"></span><span class="js-balance">1.000</span></div>
         <div class="topbar-actions">
-          <button class="icon-btn hint-btn" id="bj-hint" aria-label="Tipp von Kortomi"></button>
+          <button class="icon-btn hint-btn" id="bj-hint" aria-label="Tipp vom Croupier"></button>
           <button class="icon-btn js-sound" aria-label="Ton an/aus"></button>
           <button class="icon-btn" data-open="settings" aria-label="Einstellungen"></button>
         </div>
@@ -105,7 +105,7 @@
           <svg class="felt-print" viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
             <defs><path id="arc-bj" d="M140 250 Q500 470 860 250"/><path id="arc-bj2" d="M190 300 Q500 500 810 300"/></defs>
             <text class="felt-arc"><textPath href="#arc-bj" startOffset="50%" text-anchor="middle">Blackjack zahlt 3 zu 2</textPath></text>
-            <text class="felt-arc small"><textPath href="#arc-bj2" startOffset="50%" text-anchor="middle">Kortomi steht auf Soft 17 · Versicherung zahlt 2 zu 1</textPath></text>
+            <text class="felt-arc small"><textPath href="#arc-bj2" startOffset="50%" text-anchor="middle"><tspan class="js-dealer-name">Kortomi</tspan> steht auf Soft 17 · Versicherung zahlt 2 zu 1</textPath></text>
           </svg>
         </div>
         <div class="bj-dealer-spot" id="bj-dealer"></div>

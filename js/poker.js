@@ -4,7 +4,7 @@ import { CardLayer, newDeck, shuffle, sleep } from './cards.js';
 import { chipSVG } from './art.js';
 import { sfx, vibrate } from './audio.js';
 import { store, unlock, chipValues } from './store.js';
-import { mountMascot, say, setMood, jump } from './mascot.js';
+import { mountMascot, say, setMood, jump, pick, pickLocal } from './mascot.js';
 import { celebrate } from './fx.js';
 import { fmt, updateBalance } from './ui.js';
 
@@ -39,7 +39,7 @@ const LINES = {
   big: ['Das… das darf nicht wahr sein!', 'WER hat diese Karten gemischt?!'],
   royal: ['ROYAL FLUSH?! Ich kündige!'],
 };
-const line = k => { const a = LINES[k]; return a[Math.floor(Math.random() * a.length)]; };
+const line = k => pickLocal('vp', LINES, k);
 
 // ---------- Auswertung ----------
 export function evaluate(cards) {
@@ -185,7 +185,7 @@ async function deal() {
   phase = 'hold';
   const pre = evaluate(hand);
   renderPay(pre); renderBadges(); renderActions();
-  if (pre && PAY_OF[pre].mult >= 9) say(M, 'Hm… das sieht schon gut aus. Zu gut.', { mood: 'shock', priority: 2 });
+  if (pre && PAY_OF[pre].mult >= 9) say(M, pick('vpTease'), { mood: 'shock', priority: 2 });
 }
 
 function toggleHold(i) {

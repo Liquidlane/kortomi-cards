@@ -3,6 +3,12 @@ import { kortomiSVG, MOODS } from './art.js';
 import { speak } from './audio.js';
 import { store } from './store.js';
 import { EXTRA } from './lines-extra.js';
+import { CHOC } from './lines-choc.js';
+import { chocSVG } from './clerk.js';
+
+// Aktiver Croupier: 'kortomi' (Standard) oder 'choc' (im Shop gekauft)
+export const dealer = () => (store.d.look?.dealer === 'choc' ? 'choc' : 'kortomi');
+const isChoc = () => dealer() === 'choc';
 
 export const LINES = {
   lobby: [
@@ -55,6 +61,12 @@ export const LINES = {
   solFast: ['Unter drei Minuten?! Bist du ein Kartenroboter?'],
   solNew: ['Neue Runde, neues Chaos.', 'Frische Karten. Diesmal klappt’s. Vielleicht.'],
   solRecycle: ['Nochmal von vorn durch den Stapel.'],
+  bjInsLost: ['Kein Blackjack. Deine Versicherung gehört jetzt mir.'],
+  bjTipIns: ['Versicherung lohnt sich auf Dauer nicht. Sagt das Buch. Ich sag gar nix.'],
+  bjTipBet: ['Setz nur, was du verkraften kannst. Also… Chips. Es sind nur Chips.'],
+  vpTease: ['Hm… das sieht schon gut aus. Zu gut.'],
+  dailyGift: ['Hier. Dein Taschengeld. Und jetzt verspiel es brav bei mir.'],
+  voiceTest: ['So klinge ich jetzt. Gefällt’s dir?'],
   achievement: ['Ooh, ein Abzeichen! Glänzt fast so schön wie ich.', 'Erfolg freigeschaltet. Ich bin beeindruckt. Ein bisschen.'],
 };
 
@@ -63,7 +75,16 @@ for (const [k, arr] of Object.entries(EXTRA)) LINES[k] = [...(LINES[k] || []), .
 // Mischbeutel je Schlüssel: Jeder Spruch kommt erst wieder, wenn alle anderen dran waren
 const bags = {}, last = {};
 export function pick(key, vars = {}) {
-  const arr = LINES[key];
+  // Choc hat eigene Sprüche; fehlt ein Schlüssel, nimmt er den allgemeinen Smalltalk
+  if (isChoc()) { const ck = CHOC[key] ? key : 'idle'; return pickFrom('c:' + ck, CHOC[ck], vars); }
+  return pickFrom(key, LINES[key], vars);
+}
+// Für Spiele mit eigenen Tabellen (Höher/Tiefer, Video-Poker): Choc-Variante unter prefix_key
+export function pickLocal(prefix, table, k) {
+  if (isChoc() && CHOC[`${prefix}_${k}`]) return pickFrom(`c:${prefix}_${k}`, CHOC[`${prefix}_${k}`]);
+  return pickFrom(`${prefix}:${k}`, table[k]);
+}
+function pickFrom(key, arr, vars = {}) {
   if (!arr || !arr.length) return '';
   if (!bags[key] || !bags[key].length) {
     const b = arr.map((_, j) => j);
@@ -89,13 +110,14 @@ export async function detectCustomMascot() {
 // ---------- Instanzen ----------
 const instances = new Map();
 export function mountMascot(slot, name) {
-  slot.innerHTML = customImg ? `<img class="kortomi-img" src="${customImg}" alt="Kortomi">` : kortomiSVG();
+  const img = customImg && !isChoc();
+  slot.innerHTML = img ? `<img class="kortomi-img" src="${customImg}" alt="Kortomi">` : isChoc() ? chocSVG() : kortomiSVG();
   const el = slot.firstElementChild;
   // Eindeutige IDs je Instanz, damit Verläufe in mehreren Kopien funktionieren
-  if (!customImg) {
+  if (!img) {
     el.innerHTML = el.innerHTML.replace(/id="k-([\w-]+)"/g, `id="k-$1-${name}"`).replace(/url\(#k-([\w-]+)\)/g, `url(#k-$1-${name})`);
   }
-  const inst = { slot, el, name, mood: 'idle', timer: null };
+  const inst = { slot, el, name, mood: 'idle', timer: null, img, who: dealer() };
   instances.set(name, inst);
   setMood(name, 'idle');
   return inst;
@@ -105,8 +127,8 @@ export function setMood(name, mood, holdMs = 0) {
   const inst = instances.get(name);
   if (!inst) return;
   clearTimeout(inst.timer);
-  inst.mood = MOODS.includes(mood) ? mood : 'idle';
-  if (customImg) {
+  inst.mood = MOODS.includes(mood) || (inst.who === 'choc' && (mood === 'sleep' || mood === 'yawn')) ? mood : 'idle';
+  if (inst.img) {
     const img = inst.el;
     const want = inst.mood === 'idle' ? customImg : `assets/custom/kortomi-${inst.mood}.png`;
     img.onerror = () => { img.onerror = null; img.src = customImg; };
@@ -138,9 +160,12 @@ export function say(name, text, { mood, priority = 1, hold } = {}) {
   if (!inst || !inst.slot.offsetParent && !inst.slot.closest('[data-active]')) return;
   active = inst;
   // Tippzeit vorab berechnen: normale Zeichen, kurze Pause bei Komma, längere bei Satzende
-  const delayFor = ch => (/[.!?…]/.test(ch) ? 230 : /[,;:–]/.test(ch) ? 140 : ch === ' ' ? 38 : 46);
+  const slow = inst.who === 'choc' ? 1.3 : 1;
+  const delayFor = ch => slow * (/[.!?…]/.test(ch) ? 230 : /[,;:–]/.test(ch) ? 140 : ch === ' ' ? 38 : 46);
   const typing = [...text].reduce((s, ch) => s + delayFor(ch), 0);
-  const spokenMood = mood || inst.mood;
+  const spokenMood = inst.who === 'choc' ? 'sad' : mood || inst.mood;
+  const pitch = inst.who === 'choc' ? 0.74 : 1;
+  const snore = /^Zzz/.test(text);
   if (mood) setMood(name, mood, Math.max(2600, typing + 900));
   clearTimeout(typeTimer); clearTimeout(hideTimer);
   bubbleP.textContent = '';
@@ -156,7 +181,7 @@ export function say(name, text, { mood, priority = 1, hold } = {}) {
     bubbleP.textContent = text.slice(0, i);
     const ch = text[i - 1];
     const rise = qEnd > 0 && i > qEnd - 5 ? (i - (qEnd - 5)) * 0.035 : 0;
-    speak(ch, { mood: spokenMood, rise, loud });
+    if (!(snore && /z/i.test(ch))) speak(ch, { mood: spokenMood, rise, loud, pitch });
     if (i >= text.length) { inst.el.classList.remove('talking'); return; }
     typeTimer = setTimeout(step, delayFor(ch));
   };
@@ -229,6 +254,7 @@ export function startIdleChatter(getContext) {
     const now = performance.now();
     if (now - lastSpoke < wait) return;
     // Mal Smalltalk, mal Spiel-bezogen
+    if (isChoc() && Math.random() < 0.2) { say(ctx.name, pick('sleep'), { mood: 'sleep', priority: 3, hold: 7000 }); setMood(ctx.name, 'sleep', 14000); ctx.onTalk?.(); reset(); return; }
     const key = ctx.key && Math.random() < 0.5 ? ctx.key : 'idle';
     say(ctx.name, pick(key), { mood: IDLE_MOODS[Math.floor(Math.random() * IDLE_MOODS.length)], priority: 3 });
     ctx.onTalk?.();
@@ -248,7 +274,17 @@ export function poke(name, ctxKey) {
   else if (pokes >= 4) { key = 'pokeMore'; mood = ['wink', 'shock', 'smug', 'think'][Math.floor(Math.random() * 4)]; }
   else { key = ctxKey && Math.random() < 0.4 ? ctxKey : 'poke'; mood = ['happy', 'wink', 'love', 'shock', 'smug'][Math.floor(Math.random() * 5)]; }
   if (pokes === 12) { key = 'pokeSecret'; mood = 'love'; }
+  if (instances.get(name)?.mood === 'sleep') { key = 'wake'; mood = 'shock'; pokes = 0; }
   jump(name);
   say(name, pick(key), { mood, priority: 3 });
 }
 export function noteActivity() { lastSpoke = Math.max(lastSpoke, performance.now()); }
+
+// Croupier gewechselt: alle Figuren neu zeichnen
+export function showDealerName() {
+  document.querySelectorAll('.js-dealer-name').forEach(e => { e.textContent = isChoc() ? 'Choc' : 'Kortomi'; });
+}
+export function remountAll() {
+  hideBubble(); showDealerName();
+  for (const [name, inst] of [...instances]) if (inst.slot.isConnected) mountMascot(inst.slot, name);
+}

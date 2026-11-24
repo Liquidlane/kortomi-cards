@@ -792,3 +792,9 @@ input[type=range] { accent-color: var(--candy); width: 130px; }
 .sol-reward { margin: -6px 0 16px; padding: 8px 12px; border-radius: 14px; background: rgba(232,194,122,.12); box-shadow: inset 0 0 0 1px rgba(232,194,122,.35); }
 .sol-reward b { display: block; font-size: 22px; color: var(--brass); }
 .sol-reward span { font-size: 12.5px; color: var(--text-dim); }
+/* Choc als Croupier an den Tischen */
+.choc { width: 100%; height: 100%; overflow: visible; display: block; }
+.screen:not([data-active]) .choc *, .screen:not([data-active]) .choc { animation-play-state: paused !important; }
+.shop-dealer { width: 64px; height: 64px; display: grid; place-items: center; border-radius: 14px; background: rgba(184,156,255,.08); }
+.shop-dealer svg { width: 60px; height: 74px; overflow: visible; }
+.shop-dealer.choc-bg { background: linear-gradient(180deg, #1d2a55, #141a38); }

@@ -32,7 +32,8 @@ Siehe `assets/custom/LIESMICH.txt`: `kortomi.png` (plus optionale Stimmungen) un
 | `js/blackjack.js` | Blackjack-Regeln, Basisstrategie, Ablauf |
 | `js/solitaire.js` | Klondike mit Ziehen/Ablegen, Antippen, Zurück, Tipp, Auto-Fertig |
 | `js/shop.js` | Upgrade-Shop: Katalog, Kaufen mit Chips, Filz/Kartenrücken, Tagesgeld |
-| `js/clerk.js` | Ladentheke im Shop: tagsüber Kortomi, nachts (20–6 Uhr) Choccypuddin mit eigenen Sprüchen |
+| `js/clerk.js` | Ladentheke im Shop: tagsüber Kortomi, nachts (20–6 Uhr) Choccypuddin; Chocs Figur |
+| `js/lines-choc.js` | Sprüche für Choc als Croupier (im Shop für 4.000 Chips kaufbar) |
 | `js/hilo.js` | Höher oder Tiefer (im Shop freischaltbar) |
 | `js/poker.js` | Video-Poker, Jacks or Better (im Shop freischaltbar) |
 | `js/mascot.js` | Kortomis Stimmungen, Sprechblase, alle Sprüche |

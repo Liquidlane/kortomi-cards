@@ -9,7 +9,7 @@ const defaults = () => ({
   pendingVp: 0,
   lastBet: 25,
   owned: {},
-  look: { felt: 'velvet', back: 'kortomi' },
+  look: { felt: 'velvet', back: 'kortomi', dealer: 'kortomi' },
   daily: '',
   sideBet: { hl: 25, vp: 25 },
   settings: { sound: true, volume: 0.7, voice: true, voicePitch: 1, draw3: false, tips: true, chatty: 2, motion: true, mascotSol: true },
