@@ -1,0 +1,16 @@
+Eigene Bilder für Kortomi Cards
+================================
+
+Lege hier PNG-Dateien ab, um die eingebauten Grafiken zu ersetzen:
+
+  kortomi.png            Das Maskottchen (Hochformat, ca. 4:5, transparenter Hintergrund)
+  kortomi-happy.png      optional: Stimmung "freut sich"
+  kortomi-smug.png       optional: "selbstgefällig"
+  kortomi-shock.png      optional: "geschockt"
+  kortomi-sad.png        optional: "beleidigt"
+  kortomi-wink.png       optional: "zwinkert"
+  kortomi-love.png       optional: "verliebt"
+  kortomi-think.png      optional: "überlegt"
+  kartenruecken.png      Kartenrücken (Verhältnis 5:7)
+
+Fehlt eine Stimmungs-Datei, wird kortomi.png verwendet.

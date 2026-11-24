@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+  <title>Kortomi Cards</title>
+  <meta name="description" content="Blackjack und Solitaire mit Kortomi, der frechsten Croupière der Unterwelt.">
+  <meta name="theme-color" content="#170b20">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Kortomi">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" type="image/svg+xml" href="assets/icon.svg">
+  <link rel="apple-touch-icon" href="assets/icon-180.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Grenze+Gotisch:wght@500;700;900&display=swap">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- Hintergrund: angedeutetes Casino-Diorama -->
+  <div class="diorama" aria-hidden="true">
+    <div class="scene">
+      <div class="wall">
+        <div class="arch a1"></div><div class="arch a2"></div><div class="arch a3"></div>
+        <div class="neon-sign"><span>Kortomi</span><small>Casino &amp; Karten</small></div>
+        <div class="curtain left"></div><div class="curtain right"></div>
+      </div>
+      <div class="floor"></div>
+      <div class="slot s1"><i></i><b></b></div>
+      <div class="slot s2"><i></i><b></b></div>
+      <div class="slot s3"><i></i><b></b></div>
+      <div class="slot s4"><i></i><b></b></div>
+      <div class="roulette"><i></i></div>
+      <div class="chandelier c1"></div>
+      <div class="chandelier c2"></div>
+    </div>
+    <div class="bokeh"></div>
+    <div class="vignette"></div>
+  </div>
+
+  <canvas id="fx" aria-hidden="true"></canvas>
+
+  <main id="app">
+    <!-- LOBBY -->
+    <section class="screen lobby" id="screen-lobby" data-active>
+      <header class="topbar">
+        <div class="balance-pill" title="Dein Guthaben"><span class="chip-ico"></span><span class="js-balance">1.000</span></div>
+        <div class="topbar-actions">
+          <button class="icon-btn js-sound" aria-label="Ton an/aus"></button>
+          <button class="icon-btn" data-open="settings" aria-label="Einstellungen"></button>
+        </div>
+      </header>
+      <div class="lobby-body">
+        <h1 class="logo"><span class="logo-main">Kortomi</span><span class="logo-sub">Cards</span></h1>
+        <div class="lobby-host">
+          <div class="mascot-slot" id="lobby-mascot"></div>
+        </div>
+        <nav class="game-picks">
+          <button class="pick pick-bj" data-go="blackjack">
+            <span class="pick-art" id="pick-art-bj"></span>
+            <span class="pick-name">Blackjack</span>
+            <span class="pick-desc">Gegen Kortomi, 3 zu 2</span>
+          </button>
+          <button class="pick pick-sol" data-go="solitaire">
+            <span class="pick-art" id="pick-art-sol"></span>
+            <span class="pick-name">Solitaire</span>
+            <span class="pick-desc">Klondike, ganz in Ruhe</span>
+          </button>
+        </nav>
+        <div class="lobby-links">
+          <button class="text-btn" data-open="achievements"><span class="ico ico-trophy"></span>Erfolge <span class="js-ach-count"></span></button>
+          <button class="text-btn" data-open="stats"><span class="ico ico-stats"></span>Statistik</button>
+          <button class="text-btn" data-open="settings"><span class="ico ico-gear"></span>Einstellungen</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- BLACKJACK -->
+    <section class="screen game" id="screen-blackjack">
+      <header class="topbar">
+        <button class="icon-btn back" data-go="lobby" aria-label="Zur Lobby"></button>
+        <div class="balance-pill"><span class="chip-ico"></span><span class="js-balance">1.000</span></div>
+        <div class="topbar-actions">
+          <button class="icon-btn hint-btn" id="bj-hint" aria-label="Tipp von Kortomi"></button>
+          <button class="icon-btn js-sound" aria-label="Ton an/aus"></button>
+          <button class="icon-btn" data-open="settings" aria-label="Einstellungen"></button>
+        </div>
+      </header>
+      <div class="table bj-table" id="bj-table">
+        <div class="felt">
+          <svg class="felt-print" viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+            <defs><path id="arc-bj" d="M140 250 Q500 470 860 250"/><path id="arc-bj2" d="M190 300 Q500 500 810 300"/></defs>
+            <text class="felt-arc"><textPath href="#arc-bj" startOffset="50%" text-anchor="middle">Blackjack zahlt 3 zu 2</textPath></text>
+            <text class="felt-arc small"><textPath href="#arc-bj2" startOffset="50%" text-anchor="middle">Kortomi steht auf Soft 17 · Versicherung zahlt 2 zu 1</textPath></text>
+          </svg>
+        </div>
+        <div class="bj-dealer-spot" id="bj-dealer"></div>
+        <div class="shoe" id="bj-shoe"><div class="shoe-fill"></div></div>
+        <div class="bet-circle" id="bj-bet"><span class="bet-amount"></span></div>
+        <div class="cards-layer" id="bj-cards"></div>
+        <div class="badges-layer" id="bj-badges"></div>
+      </div>
+      <footer class="controls bj-controls" id="bj-controls">
+        <div class="chip-rack" id="bj-rack"></div>
+        <div class="action-row" id="bj-actions"></div>
+      </footer>
+    </section>
+
+    <!-- SOLITAIRE -->
+    <section class="screen game" id="screen-solitaire">
+      <header class="topbar">
+        <button class="icon-btn back" data-go="lobby" aria-label="Zur Lobby"></button>
+        <div class="sol-meta">
+          <span><i>Zeit</i><b id="sol-time">0:00</b></span>
+          <span><i>Züge</i><b id="sol-moves">0</b></span>
+          <span><i>Punkte</i><b id="sol-score">0</b></span>
+        </div>
+        <div class="topbar-actions">
+          <button class="icon-btn js-sound" aria-label="Ton an/aus"></button>
+          <button class="icon-btn" data-open="settings" aria-label="Einstellungen"></button>
+        </div>
+      </header>
+      <div class="table sol-table" id="sol-table">
+        <div class="felt"></div>
+        <div class="slots-layer" id="sol-slots"></div>
+        <div class="cards-layer" id="sol-cards"></div>
+      </div>
+      <footer class="controls sol-controls">
+        <button class="ctl" id="sol-new"><span class="ico ico-new"></span>Neues Spiel</button>
+        <button class="ctl" id="sol-undo"><span class="ico ico-undo"></span>Zurück</button>
+        <button class="ctl" id="sol-hint"><span class="ico ico-bulb"></span>Tipp</button>
+        <button class="ctl ctl-hot" id="sol-auto" hidden><span class="ico ico-magic"></span>Fertig legen</button>
+      </footer>
+      <div class="sol-mascot" id="sol-mascot"></div>
+    </section>
+  </main>
+
+  <!-- Kortomi-Sprechblase (wird an das aktive Maskottchen geheftet) -->
+  <div class="bubble" id="bubble" role="status" aria-live="polite"><p></p></div>
+
+  <!-- Dialoge -->
+  <div class="sheet-backdrop" id="sheet-backdrop"></div>
+  <div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-title">
+    <div class="sheet-head"><h2 id="sheet-title"></h2><button class="icon-btn close" id="sheet-close" aria-label="Schließen"></button></div>
+    <div class="sheet-body" id="sheet-body"></div>
+  </div>
+
+  <div class="toasts" id="toasts"></div>
+
+  <svg id="sprite" width="0" height="0" style="position:absolute" aria-hidden="true"></svg>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
