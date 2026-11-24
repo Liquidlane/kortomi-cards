@@ -798,3 +798,25 @@ input[type=range] { accent-color: var(--candy); width: 130px; }
 .shop-dealer { width: 64px; height: 64px; display: grid; place-items: center; border-radius: 14px; background: rgba(184,156,255,.08); }
 .shop-dealer svg { width: 60px; height: 74px; overflow: visible; }
 .shop-dealer.choc-bg { background: linear-gradient(180deg, #1d2a55, #141a38); }
+
+/* ---------- Cloud-Spielstand ---------- */
+.cloud-intro { color: var(--text-dim); margin: 4px 0 14px; line-height: 1.4; }
+.cloud-form { display: flex; gap: 10px; align-items: center; }
+.cloud-code {
+  width: 7.5em; padding: 10px 14px; border-radius: 14px; border: 0;
+  background: rgba(184,156,255,.1); box-shadow: inset 0 0 0 1.5px rgba(184,156,255,.3);
+  color: var(--bone); font: 600 26px var(--f-ui); letter-spacing: .3em; text-align: center; font-variant-numeric: tabular-nums;
+}
+.cloud-code:focus { outline: none; box-shadow: inset 0 0 0 2px var(--candy); }
+.cloud-msg { color: var(--text-dim); margin: 14px 0 0; }
+.cloud-msg.err { color: #ff9cbc; }
+.cloud-compare { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 18px; }
+.cloud-side { padding: 12px 14px; border-radius: 16px; background: rgba(184,156,255,.08); box-shadow: inset 0 0 0 1.5px transparent; }
+.cloud-side.newer { box-shadow: inset 0 0 0 1.5px var(--brass); }
+.cloud-side h3 { margin: 0 0 8px; font-size: 14px; font-weight: 500; color: var(--text-dim); display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.cloud-side h3 em { font-style: normal; font-size: 11px; font-weight: 600; padding: 1px 7px; border-radius: 99px; background: var(--brass); color: #3a1d10; }
+.cloud-side.empty p { margin: 0; color: var(--text-dim); font-size: 14px; }
+.cloud-chips { font-size: 24px; font-weight: 600; color: var(--bone); font-variant-numeric: tabular-nums; }
+.cloud-chips span { font-size: 13px; font-weight: 500; color: var(--text-dim); }
+.cloud-meta { margin-top: 4px; font-size: 13px; color: var(--text-dim); line-height: 1.4; }
+.cloud-actions { display: flex; flex-direction: column; gap: 8px; margin-top: 16px; }

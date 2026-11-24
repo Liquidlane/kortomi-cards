@@ -20,6 +20,12 @@ Auf dem iPhone in Safari: Teilen → „Zum Home-Bildschirm“. Auf Android in C
 
 Nach Änderungen an Dateien in `sw.js` die `VERSION` erhöhen, damit installierte Apps das Update sicher bekommen.
 
+## Spielstand zwischen Geräten (Cloud)
+
+Im Hauptmenü unter **„Schon gespielt?“** gibt man einen 4-stelligen Code ein. Die App zeigt den Stand auf dem Gerät und den in der Cloud (Datum, Chips, Erfolge) und fragt, welcher übernommen wird.
+
+Gespeichert wird kostenlos bei [Pantry](https://getpantry.cloud): dort einmal eine Pantry anlegen und die Pantry-ID in `js/cloud.js` bei `PANTRY_ID` eintragen. Jeder Code ist ein eigener „Basket“ (`kortomi-1234`). Wer die ID und einen Code kennt, kann den Stand lesen und überschreiben, für ein Kartenspiel reicht das.
+
 ## Eigene Bilder
 
 Siehe `assets/custom/LIESMICH.txt`: `kortomi.png` (plus optionale Stimmungen) und `kartenruecken.png` ersetzen die eingebauten Grafiken.
@@ -39,4 +45,5 @@ Siehe `assets/custom/LIESMICH.txt`: `kortomi.png` (plus optionale Stimmungen) un
 | `js/mascot.js` | Kortomis Stimmungen, Sprechblase, alle Sprüche |
 | `js/audio.js` | Synthetische Soundeffekte (WebAudio) |
 | `js/store.js` | Speicherstand, Statistik, Erfolge |
+| `js/cloud.js` | Cloud-Spielstand per 4-stelligem Code (Pantry) |
 | `js/fx.js` | Konfetti, Fledermäuse, Parallax des Casino-Dioramas |

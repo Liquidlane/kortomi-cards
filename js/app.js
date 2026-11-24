@@ -11,6 +11,7 @@ import { enterBlackjack } from './blackjack.js';
 import { enterSolitaire, solitaireSettingChanged } from './solitaire.js';
 import { enterHilo } from './hilo.js';
 import { enterPoker } from './poker.js';
+import { cloudHTML, bindCloud } from './cloud.js';
 import { shopHTML, bindShop, applyLook, dailyReady, claimDaily, DAILY_AMOUNT } from './shop.js';
 
 const $ = s => document.querySelector(s);
@@ -34,7 +35,7 @@ $$('.icon-btn.back').forEach(b => (b.innerHTML = icon('back')));
 $$('.icon-btn[data-open="settings"]').forEach(b => (b.innerHTML = icon('gear')));
 $('#sheet-close').innerHTML = icon('close');
 $('#bj-hint').innerHTML = icon('bulb');
-const ICO = { 'ico-shop': 'shop', 'ico-gift': 'gift', 'ico-trophy': 'trophy', 'ico-stats': 'stats', 'ico-gear': 'gear', 'ico-new': 'new', 'ico-undo': 'undo', 'ico-bulb': 'bulb', 'ico-magic': 'magic' };
+const ICO = { 'ico-shop': 'shop', 'ico-gift': 'gift', 'ico-trophy': 'trophy', 'ico-stats': 'stats', 'ico-gear': 'gear', 'ico-new': 'new', 'ico-undo': 'undo', 'ico-bulb': 'bulb', 'ico-magic': 'magic', 'ico-cloud': 'cloud' };
 $$('.ico').forEach(el => { for (const k in ICO) if (el.classList.contains(k)) el.outerHTML = icon(ICO[k]); });
 $$('.chip-ico').forEach(el => (el.innerHTML = chipSVG(100)));
 
@@ -133,13 +134,23 @@ function openSheet(kind) {
   if (kind === 'stats') { $('#sheet-title').textContent = 'Statistik'; body.innerHTML = statsHTML(); }
   if (kind === 'achievements') { $('#sheet-title').textContent = 'Erfolge'; body.innerHTML = achHTML(); }
   if (kind === 'shop') { $('#sheet-title').textContent = 'Upgrade-Shop'; body.innerHTML = shopHTML(); bindShop(body, SHOP_HOOKS); hideBubble(); mountClerk($('#clerk')); }
+  if (kind === 'cloud') { $('#sheet-title').textContent = 'Schon gespielt?'; body.innerHTML = cloudHTML(); bindCloud(body, CLOUD_HOOKS); }
   sheet.classList.add('show'); backdrop.classList.add('show');
+  if (kind === 'cloud') return;
   setTimeout(() => $('#sheet-close').focus({ preventScroll: true }), 50);
 }
 const SHOP_HOOKS = {
   onBought: () => { refreshLobby(); updateBalance(); },
   onPlay: id => { closeSheet(); go(Object.keys(GAMES).find(g => GAMES[g] === id)); },
 };
+const CLOUD_HOOKS = {
+  onPulled: () => { sessionStorage.setItem('kortomi-cloud-msg', '1'); location.reload(); },
+  onPushed: code => { closeSheet(); sfx.sparkle(); toast('In der Cloud gespeichert', `Code ${code}. Auf dem anderen Gerät einfach eingeben.`); },
+};
+if (sessionStorage.getItem('kortomi-cloud-msg')) {
+  sessionStorage.removeItem('kortomi-cloud-msg');
+  setTimeout(() => toast('Spielstand geladen', 'Willkommen zurück!'), 600);
+}
 function closeSheet() { hideClerk(); sheet.classList.remove('show'); backdrop.classList.remove('show'); }
 $('#sheet-close').addEventListener('click', closeSheet);
 backdrop.addEventListener('click', closeSheet);

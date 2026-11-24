@@ -21,6 +21,7 @@ const defaults = () => ({
   },
   ach: {},
   solSave: null,
+  updated: 0,
 });
 
 function merge(base, saved) {
@@ -31,6 +32,8 @@ function merge(base, saved) {
   return base;
 }
 
+export const replaceSave = saved => store.replace(saved);
+
 export const store = (() => {
   let data = defaults();
   try { const raw = localStorage.getItem(KEY); if (raw) data = merge(defaults(), JSON.parse(raw)); } catch { }
@@ -39,10 +42,13 @@ export const store = (() => {
     get d() { return data; },
     save(now = false) {
       clearTimeout(t);
+      data.updated = Date.now();
       const w = () => { try { localStorage.setItem(KEY, JSON.stringify(data)); } catch { } };
       now ? w() : (t = setTimeout(w, 120));
     },
     reset() { data = defaults(); this.save(true); },
+    // Kompletten Spielstand ersetzen (Cloud), Zeitstempel bleibt erhalten
+    replace(saved) { clearTimeout(t); data = merge(defaults(), saved); try { localStorage.setItem(KEY, JSON.stringify(data)); } catch { } },
   };
 })();
 
