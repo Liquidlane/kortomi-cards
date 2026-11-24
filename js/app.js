@@ -88,7 +88,8 @@ document.addEventListener('click', e => {
   if (snd) { store.d.settings.sound = !store.d.settings.sound; store.save(); unlockAudio(); applySettings(); sfx.tap(); }
 });
 // Audio erst nach erster Berührung (iOS)
-addEventListener('pointerdown', unlockAudio, { once: false, passive: true });
+// iOS Safari zählt 'pointerdown' nicht als Nutzer-Geste fürs Audio — erst touchend/click entsperren es.
+for (const ev of ['pointerdown', 'touchend', 'click', 'keydown']) addEventListener(ev, unlockAudio, { capture: true, passive: true });
 
 // ---------- Lobby ----------
 mountMascot($('#lobby-mascot'), 'lobby');

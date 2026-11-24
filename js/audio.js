@@ -51,7 +51,15 @@ export function unlockAudio() {
     }
     voiceBank = buildVoiceBank(ctx);
   }
-  if (ctx.state === 'suspended') ctx.resume();
+  // iOS: Audio als "Wiedergabe" markieren, damit der Stumm-Schalter nicht stummschaltet (iOS 17+)
+  try { if (navigator.audioSession && navigator.audioSession.type !== 'playback') navigator.audioSession.type = 'playback'; } catch {}
+  // iOS kennt neben 'suspended' auch 'interrupted' (nach App-Wechsel, Anruf, Sperrbildschirm)
+  if (ctx.state !== 'running') { const p = ctx.resume(); if (p && p.catch) p.catch(() => {}); }
+  // iOS entsperrt WebAudio erst zuverlässig, wenn innerhalb der Geste etwas abgespielt wird
+  try {
+    const s = ctx.createBufferSource(); s.buffer = ctx.createBuffer(1, 1, 22050);
+    s.connect(ctx.destination); s.start(0);
+  } catch {}
 }
 
 const ok = () => enabled && ctx && ctx.state === 'running';
