@@ -2,7 +2,7 @@
 import { buildSprite, icon, useCard, medalSVG, chipSVG } from './art.js';
 import { unlockAudio, configureAudio, sfx } from './audio.js';
 import { store, ACHIEVEMENTS, achCount, setUnlockHandler, checkNightOwl, START_BALANCE } from './store.js';
-import { mountMascot, say, pick, detectCustomMascot, hideBubble, setMood, startIdleChatter, noteActivity } from './mascot.js';
+import { mountMascot, say, pick, detectCustomMascot, hideBubble, setMood, startIdleChatter, poke } from './mascot.js';
 import { detectCustomBack } from './cards.js';
 import { initParallax, setReduced, celebrate } from './fx.js';
 import { fmt, updateBalance, toast } from './ui.js';
@@ -72,11 +72,20 @@ function lobbyGreet() {
   const key = store.d.balance >= 5000 ? 'lobbyRich' : store.d.balance < 100 ? 'lobbyBroke' : (h >= 23 || h < 5) ? 'lobbyNight' : 'lobby';
   setTimeout(() => current === 'lobby' && say('lobby', pick(key), { mood: 'smug', priority: 2 }), 700);
 }
-$('#lobby-mascot').addEventListener('click', () => {
-  unlockAudio();
-  const moods = ['happy', 'wink', 'love', 'shock', 'smug'];
-  const lines = ['Hey! Nicht anfassen, ich bin im Dienst.', 'Kitzeln kostet extra. 50 Chips.', 'Ich bin Kortomi. Die Croupière deines Vertrauens. Oder Misstrauens.', 'Die Flügel sind echt. Der Schirm auch.', 'Na? Lust auf eine Runde?'];
-  say('lobby', lines[Math.floor(Math.random() * lines.length)], { mood: moods[Math.floor(Math.random() * moods.length)], priority: 3 });
+// Anklicken: Kortomi reagiert auf jedem Bildschirm
+function pokeable(slot, name, ctxKey, onPoke) {
+  slot.addEventListener('click', e => {
+    if (!e.target.closest('svg, img')) return;
+    unlockAudio();
+    onPoke?.();
+    poke(name, ctxKey);
+  });
+}
+pokeable($('#lobby-mascot'), 'lobby', 'pokeLobby');
+pokeable($('#bj-dealer'), 'bj', 'pokeBj');
+pokeable($('#sol-mascot'), 'sol', 'pokeSol', () => {
+  const m = $('#sol-mascot'); m.classList.add('peek');
+  clearTimeout(m._peekT); m._peekT = setTimeout(() => m.classList.remove('peek'), 6000);
 });
 $('#lobby-mascot').style.pointerEvents = 'auto';
 
@@ -192,10 +201,9 @@ if ('serviceWorker' in navigator && location.protocol !== 'file:') {
   const start = location.hash.slice(1);
   if (start === 'blackjack' || start === 'solitaire') go(start);
   else lobbyGreet();
-  // Plaudern, wenn eine Weile nichts los ist; jede Eingabe zählt als Aktivität
-  addEventListener('pointerdown', noteActivity, { passive: true });
+  // Plaudern in regelmäßigen Abständen, auch während gespielt wird
   startIdleChatter(() => {
-    if (current === 'lobby') return { name: 'lobby', key: null };
+    if (current === 'lobby') return { name: 'lobby', key: 'idleLobby' };
     if (current === 'blackjack') return { name: 'bj', key: 'idleBj' };
     if (current === 'solitaire') {
       if (!store.d.settings.mascotSol) return null;

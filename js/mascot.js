@@ -60,12 +60,18 @@ export const LINES = {
 
 for (const [k, arr] of Object.entries(EXTRA)) LINES[k] = [...(LINES[k] || []), ...arr];
 
-const last = {};
+// Mischbeutel je Schlüssel: Jeder Spruch kommt erst wieder, wenn alle anderen dran waren
+const bags = {}, last = {};
 export function pick(key, vars = {}) {
   const arr = LINES[key];
   if (!arr || !arr.length) return '';
-  let i = Math.floor(Math.random() * arr.length);
-  if (arr.length > 1 && i === last[key]) i = (i + 1) % arr.length;
+  if (!bags[key] || !bags[key].length) {
+    const b = arr.map((_, j) => j);
+    for (let j = b.length - 1; j > 0; j--) { const r = Math.floor(Math.random() * (j + 1)); [b[j], b[r]] = [b[r], b[j]]; }
+    if (b.length > 1 && b[b.length - 1] === last[key]) [b[0], b[b.length - 1]] = [b[b.length - 1], b[0]];
+    bags[key] = b;
+  }
+  const i = bags[key].pop();
   last[key] = i;
   return arr[i].replace(/\{(\w+)\}/g, (_, k) => vars[k] ?? '');
 }
@@ -208,11 +214,12 @@ window.addEventListener('resize', () => { if (bubble.classList.contains('show'))
 
 // ---------- Zwischendurch-Geplapper ----------
 // getContext() liefert { name, key } für den aktiven Bildschirm oder null.
-// Bei "Viel" plaudert Kortomi nach ca. 20–40 s Ruhe, bei "Wenig" nach ca. 60–90 s, bei "Still" nie.
-const IDLE_MOODS = ['idle', 'smug', 'wink', 'think', 'happy'];
+// Kortomi plappert in festen Abständen seit ihrem letzten Satz – auch mitten im Spiel.
+// "Viel": alle ca. 12–22 s, "Wenig": alle ca. 40–65 s, "Still": nie.
+const IDLE_MOODS = ['idle', 'smug', 'wink', 'think', 'happy', 'love'];
 export function startIdleChatter(getContext) {
   let wait = 0;
-  const reset = () => { const c = store.d.settings.chatty; wait = c === 2 ? 20000 + Math.random() * 20000 : 60000 + Math.random() * 30000; };
+  const reset = () => { const c = store.d.settings.chatty; wait = c === 2 ? 12000 + Math.random() * 10000 : 40000 + Math.random() * 25000; };
   reset();
   setInterval(() => {
     const chat = store.d.settings.chatty;
@@ -222,10 +229,26 @@ export function startIdleChatter(getContext) {
     const now = performance.now();
     if (now - lastSpoke < wait) return;
     // Mal Smalltalk, mal Spiel-bezogen
-    const key = ctx.key && Math.random() < 0.4 ? ctx.key : 'idle';
+    const key = ctx.key && Math.random() < 0.5 ? ctx.key : 'idle';
     say(ctx.name, pick(key), { mood: IDLE_MOODS[Math.floor(Math.random() * IDLE_MOODS.length)], priority: 3 });
     ctx.onTalk?.();
     reset();
-  }, 3000);
+  }, 1500);
+}
+
+// ---------- Anstupsen ----------
+// Je öfter man kurz hintereinander klickt, desto genervter wird sie.
+let pokes = 0, lastPoke = 0;
+export function poke(name, ctxKey) {
+  const t = performance.now();
+  pokes = t - lastPoke < 9000 ? pokes + 1 : 1;
+  lastPoke = t;
+  let key, mood;
+  if (pokes >= 7) { key = 'pokeAnnoyed'; mood = Math.random() < 0.5 ? 'shock' : 'smug'; }
+  else if (pokes >= 4) { key = 'pokeMore'; mood = ['wink', 'shock', 'smug', 'think'][Math.floor(Math.random() * 4)]; }
+  else { key = ctxKey && Math.random() < 0.4 ? ctxKey : 'poke'; mood = ['happy', 'wink', 'love', 'shock', 'smug'][Math.floor(Math.random() * 5)]; }
+  if (pokes === 12) { key = 'pokeSecret'; mood = 'love'; }
+  jump(name);
+  say(name, pick(key), { mood, priority: 3 });
 }
 export function noteActivity() { lastSpoke = Math.max(lastSpoke, performance.now()); }
