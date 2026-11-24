@@ -1,12 +1,12 @@
 // Offline-Cache für Kortomi Cards. VERSION erhöhen, wenn sich Dateien ändern.
-const VERSION = 'kortomi-v10';
+const VERSION = 'kortomi-v11';
 const CORE = [
   './', 'index.html', 'manifest.webmanifest', 'css/style.css',
   'js/app.js', 'js/art.js', 'js/audio.js', 'js/blackjack.js', 'js/cards.js', 'js/fx.js', 'js/mascot.js', 'js/solitaire.js', 'js/store.js', 'js/ui.js', 'js/voice.js', 'js/lines-extra.js', 'js/cascade.js', 'js/shop.js', 'js/hilo.js', 'js/poker.js', 'js/clerk.js', 'js/lines-choc.js', 'js/cloud.js',
   'assets/icon.svg', 'assets/icon-180.png', 'assets/icon-192.png', 'assets/icon-512.png',
 ];
 self.addEventListener('install', e => {
-  e.waitUntil(caches.open(VERSION).then(c => c.addAll(CORE)).then(() => self.skipWaiting()));
+  e.waitUntil(caches.open(VERSION).then(c => c.addAll(CORE.map(u => new Request(u, { cache: 'reload' })))).then(() => self.skipWaiting()));
 });
 self.addEventListener('activate', e => {
   e.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(k => k !== VERSION).map(k => caches.delete(k)))).then(() => self.clients.claim()));
@@ -20,9 +20,9 @@ self.addEventListener('fetch', e => {
     e.respondWith(fetch(req).then(r => { const cp = r.clone(); caches.open(VERSION).then(c => c.put(req, cp)); return r; }).catch(() => caches.match(req)));
     return;
   }
-  // App-Dateien: Netz zuerst (damit Updates sofort ankommen), sonst Cache
+  // App-Dateien: Netz zuerst und am Browser-Cache vorbei (damit Updates sofort ankommen), sonst Cache
   if (url.origin === location.origin) {
-    e.respondWith(fetch(req).then(r => { if (r.ok) { const cp = r.clone(); caches.open(VERSION).then(c => c.put(req, cp)); } return r; }).catch(() => caches.match(req, { ignoreSearch: true })));
+    e.respondWith(fetch(req.url, { cache: 'no-cache' }).then(r => { if (r.ok) { const cp = r.clone(); caches.open(VERSION).then(c => c.put(req, cp)); } return r; }).catch(() => caches.match(req, { ignoreSearch: true })));
     return;
   }
   // Cloud-Spielstand nie aus dem Cache

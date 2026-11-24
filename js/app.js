@@ -33,6 +33,7 @@ function applySettings() {
 // Icons verteilen
 $$('.icon-btn.back').forEach(b => (b.innerHTML = icon('back')));
 $$('.icon-btn[data-open="settings"]').forEach(b => (b.innerHTML = icon('gear')));
+$$('.icon-btn[data-open="cloud"]').forEach(b => (b.innerHTML = icon('cloud')));
 $('#sheet-close').innerHTML = icon('close');
 $('#bj-hint').innerHTML = icon('bulb');
 const ICO = { 'ico-shop': 'shop', 'ico-gift': 'gift', 'ico-trophy': 'trophy', 'ico-stats': 'stats', 'ico-gear': 'gear', 'ico-new': 'new', 'ico-undo': 'undo', 'ico-bulb': 'bulb', 'ico-magic': 'magic', 'ico-cloud': 'cloud' };
