@@ -20,6 +20,7 @@ const defaults = () => ({
     vp: { hands: 0, wins: 0, biggestWin: 0, best: '' },
   },
   ach: {},
+  tutorials: {},
   solSave: null,
   updated: 0,
 });

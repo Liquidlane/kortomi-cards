@@ -820,3 +820,20 @@ input[type=range] { accent-color: var(--candy); width: 130px; }
 .cloud-chips span { font-size: 13px; font-weight: 500; color: var(--text-dim); }
 .cloud-meta { margin-top: 4px; font-size: 13px; color: var(--text-dim); line-height: 1.4; }
 .cloud-actions { display: flex; flex-direction: column; gap: 8px; margin-top: 16px; }
+
+/* Tutorials (js/tutorial.js) */
+.tut { position: fixed; inset: 0; z-index: 120; display: flex; align-items: flex-end; justify-content: center; padding: 16px calc(16px + var(--sar)) calc(20px + var(--sab)) calc(16px + var(--sal)); background: rgba(10, 3, 16, .55); opacity: 0; pointer-events: none; transition: opacity .25s; }
+.tut.show { opacity: 1; pointer-events: auto; }
+.tut.top { align-items: flex-start; padding-top: calc(20px + var(--sat)); }
+.tut-ring { position: fixed; border-radius: 18px; box-shadow: 0 0 0 3px var(--candy), 0 0 24px 6px rgba(255, 95, 162, .55); pointer-events: none; transition: all .35s var(--ease-out); opacity: 0; }
+.tut-card { width: min(440px, 100%); background: linear-gradient(180deg, var(--plum-2), var(--plum)); border-radius: 24px; padding: 18px 20px 16px; box-shadow: 0 20px 50px rgba(0,0,0,.5), inset 0 0 0 1.5px rgba(184,156,255,.25); transform: translateY(12px); transition: transform .3s var(--ease-spring); }
+.tut.show .tut-card { transform: none; }
+.tut-card h3 { margin: 6px 0 6px; font-family: var(--f-goth); font-size: 28px; color: var(--bone); line-height: 1.05; }
+.tut-text { margin: 0 0 14px; color: var(--text); font-size: 15.5px; line-height: 1.45; }
+.tut-text b { color: var(--brass); }
+.tut-dots { display: flex; gap: 6px; }
+.tut-dots i { width: 7px; height: 7px; border-radius: 50%; background: rgba(184,156,255,.3); transition: background .2s, transform .2s; }
+.tut-dots i.on { background: var(--candy); transform: scale(1.3); }
+.tut-nav { display: flex; gap: 8px; justify-content: flex-end; }
+.tut-nav .tut-skip { margin-right: auto; }
+.tut-help { font-family: var(--f-ui); font-weight: 700; font-size: 20px; color: var(--lilac-soft); }
