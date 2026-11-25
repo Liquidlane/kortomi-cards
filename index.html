@@ -17,6 +17,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Grenze+Gotisch:wght@500;700;900&display=swap">
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/baccarat.css">
 </head>
 <body>
   <!-- Hintergrund: angedeutetes Casino-Diorama -->
@@ -78,6 +79,11 @@
             <span class="pick-art" id="pick-art-poker"></span>
             <span class="pick-name">Poker</span>
             <span class="pick-desc">Video-Poker, Buben+</span>
+          </button>
+          <button class="pick pick-baccarat" data-go="baccarat" hidden>
+            <span class="pick-art" id="pick-art-baccarat"></span>
+            <span class="pick-name">Baccarat</span>
+            <span class="pick-desc">Spieler oder Bank?</span>
           </button>
         </nav>
         <div class="lobby-links">
@@ -169,6 +175,34 @@
       <footer class="controls bj-controls">
         <div class="chip-rack" id="vp-rack"></div>
         <div class="action-row" id="vp-actions"></div>
+      </footer>
+    </section>
+
+    <!-- BACCARAT (Shop) -->
+    <section class="screen game" id="screen-baccarat">
+      <header class="topbar">
+        <button class="icon-btn back" data-go="lobby" aria-label="Zur Lobby"></button>
+        <div class="balance-pill"><span class="chip-ico"></span><span class="js-balance">1.000</span></div>
+        <div class="topbar-actions">
+          <button class="icon-btn js-sound" aria-label="Ton an/aus"></button>
+          <button class="icon-btn" data-open="settings" aria-label="Einstellungen"></button>
+        </div>
+      </header>
+      <div class="table side-table bac-table" id="bac-table">
+        <div class="felt"></div>
+        <div class="side-dealer" id="bac-dealer"></div>
+        <div class="bac-road" id="bac-road" aria-label="Letzte Ergebnisse"></div>
+        <div class="bac-spots" id="bac-spots">
+          <button class="bac-spot" data-side="P" aria-label="Auf Spieler setzen, zahlt 1 zu 1"><span class="bac-spot-name">Spieler</span><span class="bac-spot-pay">1 : 1</span><span class="bac-stack"></span><span class="bac-amt"></span></button>
+          <button class="bac-spot" data-side="T" aria-label="Auf Unentschieden setzen, zahlt 8 zu 1"><span class="bac-spot-name">Unentschieden</span><span class="bac-spot-pay">8 : 1</span><span class="bac-stack"></span><span class="bac-amt"></span></button>
+          <button class="bac-spot" data-side="B" aria-label="Auf Bank setzen, zahlt 1 zu 1, gewinnt die Bank mit 6 nur 1 zu 2"><span class="bac-spot-name">Bank</span><span class="bac-spot-pay">1 : 1<small>mit 6: 1 : 2</small></span><span class="bac-stack"></span><span class="bac-amt"></span></button>
+        </div>
+        <div class="cards-layer" id="bac-cards"></div>
+        <div class="badges-layer" id="bac-badges"></div>
+      </div>
+      <footer class="controls bj-controls">
+        <div class="chip-rack" id="bac-rack"></div>
+        <div class="action-row" id="bac-actions"></div>
       </footer>
     </section>
 
