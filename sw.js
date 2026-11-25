@@ -1,5 +1,5 @@
 // Offline-Cache für Kortomi Cards. VERSION erhöhen, wenn sich Dateien ändern.
-const VERSION = 'kortomi-v13';
+const VERSION = 'kortomi-v14';
 const CORE = [
   './', 'index.html', 'manifest.webmanifest', 'css/style.css',
   'js/app.js', 'js/art.js', 'js/audio.js', 'js/blackjack.js', 'js/cards.js', 'js/fx.js', 'js/mascot.js', 'js/solitaire.js', 'js/store.js', 'js/ui.js', 'js/voice.js', 'js/lines-extra.js', 'js/cascade.js', 'js/shop.js', 'js/hilo.js', 'js/poker.js', 'js/clerk.js', 'js/lines-choc.js', 'js/cloud.js', 'js/tutorial.js',
@@ -8,6 +8,7 @@ const CORE = [
   'js/music.js', 'js/streaks.js', 'js/lines-streak.js', 'js/winter.js', 'css/winter.css',
   'js/spider.js', 'js/freecell.js', 'js/patience.js', 'js/patience-rules.js', 'css/patience.css',
   'js/slots.js', 'css/slots.css',
+  'js/college.js', 'js/college-art.js', 'css/college.css',
   'assets/icon.svg', 'assets/icon-180.png', 'assets/icon-192.png', 'assets/icon-512.png',
 ];
 self.addEventListener('install', e => {

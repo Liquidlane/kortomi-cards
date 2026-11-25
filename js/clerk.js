@@ -4,6 +4,7 @@ import { kortomiSVG, MOODS, SUIT_PATH } from './art.js';
 import { speak } from './audio.js';
 import { store } from './store.js';
 import { winterHat } from './winter.js';
+import { gradCap } from './college-art.js';
 
 // ---------- Choccypuddin ----------
 const CHOC_MOODS = ['idle', 'happy', 'shock', 'sad', 'sleep', 'yawn', 'love'];
@@ -88,6 +89,7 @@ export function chocSVG() {
       <g class="mood sleep"><path d="M114 164 q6 3 12 0" stroke="#2f4d8a" stroke-width="2.6" fill="none" stroke-linecap="round"/><circle class="c-bubble" cx="132" cy="168" r="5" fill="#cfe6ff" stroke="#8ec5ff" stroke-width="1.5"/>
         <g class="c-zzz" font-family="Fredoka, sans-serif" font-weight="700" fill="#cfe6ff"><text x="190" y="84" font-size="22">Z</text><text x="208" y="62" font-size="16">z</text><text x="220" y="46" font-size="12">z</text></g></g>
       ${winterHat('choc')}
+      ${gradCap()}
     </g>
   </g>
 </svg>`;
@@ -112,6 +114,7 @@ const L = {
     felt: ['Neuer Filz. Sieht weich aus. Darf ich mich kurz drauflegen? Nur kurz?', 'Schöne Farbe. Passt zu meinen Augenringen.'],
     back: ['Neue Kartenrücken. Ich hab auch Rücken. Vom Lernen.', 'Hübsch. Einpacken kann ich’s dir nicht, dafür fehlt mir die Kraft.'],
     perks: ['Luxus-Extras. Ich kauf mir davon… nichts. Ich spar fürs College.', 'Gute Investition. Besser als mein Studium. Vielleicht.'],
+    college: ['Du… zahlst mein Semester? Ich… ich weiß nicht, was ich sagen soll. Danke. Wirklich.', 'Ein ganzes Semester. Ich geh ab jetzt in jede Vorlesung. Versprochen. Fast jede.', 'Ich bin wach. Komplett wach. Das ist das Netteste, was je jemand für mich getan hat.'],
     short: [
       'Reicht nicht. Glaub mir, ich weiß, wie sich das anfühlt.',
       'Zu wenig Chips. Ich würd’s dir ja schenken, aber ich hab Miete.',
@@ -170,6 +173,7 @@ const L = {
     felt: ['Neuer Filz! Riecht noch nach Gruft. Herrlich.'],
     back: ['Hübsche Rückseite. Ändert nichts daran, dass ich gewinne.'],
     perks: ['Investiert in Luxus. Sehr vernünftig. Für mich.'],
+    college: ['Du bezahlst dem Pudding das Studium?! Mit MEINEN Chips?! …Na gut, technisch deine.', 'Studiengebühren für Choc. Und wer bezahlt MEINE Weiterbildung? Niemand. Typisch.', 'Wenn der fertig ist, will er bestimmt mehr Gehalt. Danke auch.'],
     short: ['Zu wenig Chips. Wie tragisch. Komm wieder, wenn du reicher bist.', 'Anschreiben gibt’s hier nicht, Schätzchen.'],
     arm: ['Nochmal tippen. Ich liebe dieses Geräusch.'],
     use: ['Steht dir. Fast so gut wie mir.'],

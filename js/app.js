@@ -17,6 +17,7 @@ import { GAME_TUTORIALS } from './tutorials-games.js';
 import { enterSpider } from './spider.js';
 import { enterFreecell } from './freecell.js';
 import { enterSlots, slotsArt } from './slots.js';
+import { initCollege, collegeBought } from './college.js';
 import { cloudHTML, bindCloud } from './cloud.js';
 import { shopHTML, bindShop, applyLook, dailyReady, claimDaily, DAILY_AMOUNT } from './shop.js';
 import { CATALOG, dailyAmount } from './shop.js';
@@ -169,7 +170,7 @@ function openSheet(kind) {
   setTimeout(() => $('#sheet-close').focus({ preventScroll: true }), 50);
 }
 const SHOP_HOOKS = {
-  onBought: () => { refreshLobby(); updateBalance(); },
+  onBought: i => { refreshLobby(); updateBalance(); collegeBought(i); },
   onPlay: id => { closeSheet(); go(Object.keys(GAMES).find(g => GAMES[g] === id)); },
 };
 const CLOUD_HOOKS = {
@@ -298,6 +299,7 @@ if ('serviceWorker' in navigator && location.protocol !== 'file:') {
   updateBalance();
   checkNightOwl();
   initProgress({ catalog: CATALOG });
+  initCollege();
   const start = location.hash.slice(1);
   if (start === 'blackjack' || start === 'solitaire' || (GAMES[start] && owns(GAMES[start]))) go(start);
   else lobbyGreet();

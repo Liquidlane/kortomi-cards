@@ -1,0 +1,27 @@
+/* Chocs College-Fonds (js/college.js) */
+.grad-cap { display: none; }
+html.choc-grad .grad-cap { display: inline; }
+html.choc-grad .choc-hat { display: none; } /* Doktorhut schlägt Elfenmütze */
+.col-art .grad-cap, .grad-fly .grad-cap, .grad-choc .grad-cap { display: inline; }
+
+.col-art { position: relative; display: grid; place-items: center; width: 100%; height: 100%; }
+.col-art svg { width: 78%; filter: drop-shadow(0 6px 10px rgba(0,0,0,.4)); }
+.col-art b { position: absolute; right: 8%; bottom: 6%; font-family: var(--f-goth); font-size: 22px; color: var(--brass); }
+
+.grad { position: fixed; inset: 0; z-index: 130; display: grid; place-items: center; padding: calc(16px + var(--sat)) 16px calc(16px + var(--sab)); background: radial-gradient(circle at 50% 30%, rgba(74,40,60,.96), rgba(10,3,16,.97) 70%); opacity: 0; transition: opacity .4s; overflow: hidden; }
+.grad.show { opacity: 1; }
+.grad-card { width: min(420px, 100%); text-align: center; transform: scale(.9) translateY(20px); transition: transform .6s var(--ease-spring); }
+.grad.show .grad-card { transform: none; }
+.grad-choc { width: 150px; height: 150px; margin: 0 auto -18px; position: relative; z-index: 1; }
+.grad-choc svg { width: 100%; height: 100%; }
+.grad-diploma { position: relative; background: linear-gradient(180deg, #fff8e8, #f1e2bf); color: #3a2414; border-radius: 6px; padding: 26px 22px 20px; box-shadow: 0 20px 50px rgba(0,0,0,.55), inset 0 0 0 6px #fff8e8, inset 0 0 0 8px #c9963f; }
+.grad-diploma small { display: block; letter-spacing: .18em; text-transform: uppercase; font-size: 11px; font-weight: 600; color: #8a6430; }
+.grad-diploma h2 { margin: 2px 0 8px; font-family: var(--f-goth); font-size: 44px; line-height: 1; color: #3a2414; }
+.grad-diploma p { margin: 0 0 10px; font-size: 15px; line-height: 1.45; }
+.grad-diploma .grad-note { font-size: 12.5px; color: #6b4a1e; }
+.grad-date { font-size: 12px; color: #8a6430; }
+.grad-seal { position: absolute; right: 14px; bottom: 10px; width: 46px; height: 46px; border-radius: 50%; display: grid; place-items: center; background: radial-gradient(circle at 35% 35%, #ff7ab4, #b0205f); color: #ffe7f2; font-size: 20px; box-shadow: 0 3px 8px rgba(0,0,0,.3); transform: rotate(-12deg); }
+.grad-speech { margin: 16px 6px 14px; color: var(--text); font-size: 15px; line-height: 1.45; font-style: italic; }
+.grad-fly { position: absolute; bottom: -80px; width: 70px; animation: gradFly 1.9s cubic-bezier(.2,.7,.4,1) forwards; pointer-events: none; }
+@keyframes gradFly { to { transform: translate(var(--x), -115vh) rotate(var(--r)); } }
+@media (prefers-reduced-motion: reduce) { .grad-fly { display: none; } }

@@ -61,8 +61,9 @@ export const CATALOG = [
     ],
   },
 ];
-const ALL = CATALOG.flatMap(c => c.items.map(i => ({ ...i, cat: c.key })));
-const item = id => ALL.find(i => i.id === id);
+// Als Funktion, damit später angehängte Kategorien (z. B. college.js) mitzählen
+const allItems = () => CATALOG.flatMap(c => c.items.map(i => ({ ...i, cat: c.key })));
+const item = id => allItems().find(i => i.id === id);
 const has = i => i.free || owns(i.id);
 
 // ---------- Aussehen anwenden ----------
@@ -113,13 +114,13 @@ export function shopHTML() {
   return `${clerkHTML()}<div class="shop-list">${shopListHTML()}</div>`;
 }
 function shopListHTML() {
-  const total = ALL.filter(i => !i.free).length, got = ALL.filter(i => !i.free && owns(i.id)).length;
+  const total = allItems().filter(i => !i.free).length, got = allItems().filter(i => !i.free && owns(i.id)).length;
   return `<div class="shop-head">
       <div class="balance-pill"><span class="chip-ico">${chipSVG(100)}</span><span class="js-balance">${fmt(store.d.balance)}</span></div>
       <span class="shop-progress">${got} von ${total} gekauft</span>
     </div>
-    ${CATALOG.map(c => `<div class="set-group">${c.title}</div>
-      <div class="shop-grid shop-cat-${c.key}">${ALL.filter(i => i.cat === c.key).map(i => `
+    ${CATALOG.filter(c => c.items.some(i => !i.hidden?.(i))).map(c => `<div class="set-group">${c.title}</div>
+      <div class="shop-grid shop-cat-${c.key}">${allItems().filter(i => i.cat === c.key && !i.hidden?.(i)).map(i => `
         <div class="shop-item ${has(i) ? 'owned' : ''}" data-id="${i.id}">
           ${preview(i)}
           <div class="shop-info"><b>${i.name}</b><span>${i.desc}</span></div>
@@ -170,7 +171,7 @@ export function bindShop(root, { onBought, onPlay, onLook }) {
     sfx.sparkle(); burst(r.left + r.width / 2, r.top + r.height / 2, { n: 34, kinds: ['confetti', 'heart'], power: 7 });
     toast(i.name, 'Gekauft für ' + fmt(i.price) + ' Chips');
     unlock('shop_first');
-    if (ALL.every(x => x.free || owns(x.id))) unlock('shop_all');
+    if (allItems().every(x => x.free || owns(x.id))) unlock('shop_all');
     rerender();
     onBought?.(i);
     clerkEvent('buy', i);

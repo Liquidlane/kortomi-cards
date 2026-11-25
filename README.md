@@ -56,3 +56,4 @@ Siehe `assets/custom/LIESMICH.txt`: `kortomi.png` (plus optionale Stimmungen) un
 | `js/music.js` | Generierter Lounge-Jazz (WebAudio, kein Fremdmaterial), Schalter in den Einstellungen |
 | `js/streaks.js`, `js/lines-streak.js` | Croupier-Reaktionen auf Gewinn- und Pechsträhnen |
 | `js/winter.js` | Winter-Deko (1. Dez. – 6. Jan. automatisch): Schnee, Lichterkette, Mützen, Wintersprüche |
+| `js/college.js`, `js/college-art.js` | Endgame: Chocs College-Fonds (4 Semester, 125.000 Chips), Abschlussfeier, Doktorhut, 100 Rückzahlungsraten |

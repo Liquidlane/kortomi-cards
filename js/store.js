@@ -28,6 +28,7 @@ const defaults = () => ({
   },
   ach: {},
   tutorials: {},
+  college: { repaid: 0, last: '', gradDay: '' },
   solSave: null,
   // Fortschritt (js/progress.js): Tagesgeld-Serie, Tagesaufgabe, Chip-Bilanz und Spielzeit je Spiel
   prog: { streak: 0, bestStreak: 0, lostStreak: 0, chal: { last: '', streak: 0, bestStreak: 0, solved: 0, bestTime: 0, dayTime: 0 }, chalSave: null, won: {}, lost: {}, time: {}, low: false },

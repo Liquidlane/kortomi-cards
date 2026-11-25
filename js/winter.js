@@ -18,7 +18,7 @@ export function winterOn() {
 export function winterHat(who) {
   if (who === 'choc') {
     // Elfenmütze, grün mit Glöckchen – sitzt auf der Pudding-Haube
-    return `<g class="winter-hat" transform="rotate(-6 120 84)">
+    return `<g class="winter-hat choc-hat" transform="rotate(-6 120 84)">
       <path d="M84 92 Q96 40 132 22 Q152 14 172 30 Q156 30 150 40 Q146 66 156 92 Z" fill="#2f8a4e"/>
       <path d="M132 22 Q152 14 172 30 Q158 26 146 34Z" fill="#23703d"/>
       <path d="M100 86 Q110 52 132 34" stroke="#56b874" stroke-width="4" fill="none" stroke-linecap="round" opacity=".6"/>
