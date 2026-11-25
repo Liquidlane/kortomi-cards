@@ -11,6 +11,8 @@ import { enterBlackjack } from './blackjack.js';
 import { enterSolitaire, solitaireSettingChanged } from './solitaire.js';
 import { enterHilo } from './hilo.js';
 import { enterPoker } from './poker.js';
+import { enterSpider } from './spider.js';
+import { enterFreecell } from './freecell.js';
 import { cloudHTML, bindCloud } from './cloud.js';
 import { shopHTML, bindShop, applyLook, dailyReady, claimDaily, DAILY_AMOUNT } from './shop.js';
 
@@ -46,9 +48,11 @@ $('#pick-art-bj').innerHTML = mini('1S', 14, 4, -12) + mini('13H', 44, 0, 10);
 $('#pick-art-sol').innerHTML = mini('back', 6, 6, -6) + mini('12C', 30, 2, 0) + mini('11D', 54, 6, 7);
 $('#pick-art-hilo').innerHTML = mini('7H', 10, 6, -10) + mini('back', 44, 2, 8);
 $('#pick-art-poker').innerHTML = mini('1S', 4, 8, -12) + mini('13S', 29, 2, -2) + mini('12S', 54, 8, 9);
+$('#pick-art-spider').innerHTML = mini('13S', 6, 2, -8) + mini('12S', 28, 10, 0) + mini('11S', 50, 18, 8);
+$('#pick-art-freecell').innerHTML = mini('13D', 6, 6, -10) + mini('12C', 30, 2, 0) + mini('11H', 54, 6, 10);
 
 // Gekaufte Spiele in der Lobby zeigen, Tagesgeld-Knopf
-const GAMES = { hilo: 'game_hilo', poker: 'game_poker' };
+const GAMES = { hilo: 'game_hilo', poker: 'game_poker', spider: 'game_spider', freecell: 'game_freecell' };
 function refreshLobby() {
   let n = 2;
   for (const g in GAMES) { const on = owns(GAMES[g]); $(`.pick-${g}`).hidden = !on; if (on) n++; }
@@ -76,6 +80,8 @@ function go(name) {
   else if (name === 'solitaire') enterSolitaire();
   else if (name === 'hilo') enterHilo();
   else if (name === 'poker') enterPoker();
+  else if (name === 'spider') enterSpider();
+  else if (name === 'freecell') enterFreecell();
   else lobbyGreet();
   history.replaceState(null, '', name === 'lobby' ? location.pathname : `#${name}`);
 }
@@ -113,6 +119,7 @@ pokeable($('#lobby-mascot'), 'lobby', 'pokeLobby');
 pokeable($('#bj-dealer'), 'bj', 'pokeBj');
 pokeable($('#hl-dealer'), 'hl');
 pokeable($('#vp-dealer'), 'vp');
+for (const n of ['sp', 'fc']) pokeable($(`#${n}-mascot`), n, 'pokeSol', () => { const m = $(`#${n}-mascot`); m.classList.add('peek'); clearTimeout(m._peekT); m._peekT = setTimeout(() => m.classList.remove('peek'), 6000); });
 pokeable($('#sol-mascot'), 'sol', 'pokeSol', () => {
   const m = $('#sol-mascot'); m.classList.add('peek');
   clearTimeout(m._peekT); m._peekT = setTimeout(() => m.classList.remove('peek'), 6000);
@@ -197,7 +204,7 @@ function bindSettings(root) {
     store.d.settings[k] = k === 'draw3' ? v === 1 : v;
     seg.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x === b));
     store.save(); applySettings(); solitaireSettingChanged();
-    if (k === 'voicePitch') say({ lobby: 'lobby', blackjack: 'bj', solitaire: 'sol', hilo: 'hl', poker: 'vp' }[current], pick('voiceTest'), { mood: 'wink', priority: 3 });
+    if (k === 'voicePitch') say({ lobby: 'lobby', blackjack: 'bj', solitaire: 'sol', hilo: 'hl', poker: 'vp', spider: 'sp', freecell: 'fc' }[current], pick('voiceTest'), { mood: 'wink', priority: 3 });
     else sfx.tap();
   }));
   root.querySelector('#reset-all').addEventListener('click', () => {
@@ -232,6 +239,12 @@ function extraStats() {
     ${st(fmt(h.rounds), 'Runden')}${st(fmt(h.cashouts), 'Kassiert')}${st(fmt(h.bestStreak), 'Längste Trefferserie')}${st(fmt(h.biggestWin), 'Größter Gewinn')}</div></div>`;
   if (owns('game_poker')) out += `<div class="stat-block"><h3>Video-Poker</h3><div class="stat-grid">
     ${st(fmt(v.hands), 'Hände')}${st(fmt(v.wins), 'Gewonnen')}${st(best[v.best] || '–', 'Beste Hand')}${st(fmt(v.biggestWin), 'Größter Gewinn')}</div></div>`;
+  const tm = sec => (sec ? `${Math.floor(sec / 60)}:${String(sec % 60).padStart(2, '0')}` : '–');
+  const sp = store.d.stats.sp, fc = store.d.stats.fc;
+  if (owns('game_spider')) out += `<div class="stat-block"><h3>Spider</h3><div class="stat-grid">
+    ${st(fmt(sp.played), 'Spiele')}${st(fmt(sp.won), 'Gewonnen')}${st(tm(sp.bestTime), 'Bestzeit')}${st(fmt(sp.won4), 'Siege mit 4 Farben')}${st(fmt(sp.chips), 'Chips erspielt')}</div></div>`;
+  if (owns('game_freecell')) out += `<div class="stat-block"><h3>FreeCell</h3><div class="stat-grid">
+    ${st(fmt(fc.played), 'Spiele')}${st(fmt(fc.won), 'Gewonnen')}${st(tm(fc.bestTime), 'Bestzeit')}${st(fmt(fc.chips), 'Chips erspielt')}</div></div>`;
   return out;
 }
 
@@ -265,6 +278,11 @@ if ('serviceWorker' in navigator && location.protocol !== 'file:') {
     if (current === 'blackjack') return { name: 'bj', key: 'idleBj' };
     if (current === 'hilo') return { name: 'hl', key: 'idle' };
     if (current === 'poker') return { name: 'vp', key: 'idle' };
+    if (current === 'spider' || current === 'freecell') {
+      if (!store.d.settings.mascotSol) return null;
+      const n = current === 'spider' ? 'sp' : 'fc', m = document.getElementById(`${n}-mascot`);
+      return { name: n, key: 'idleSol', onTalk: () => { m.classList.add('peek'); setTimeout(() => m.classList.remove('peek'), 6000); } };
+    }
     if (current === 'solitaire') {
       if (!store.d.settings.mascotSol) return null;
       const m = document.getElementById('sol-mascot');

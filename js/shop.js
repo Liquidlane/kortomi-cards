@@ -17,6 +17,8 @@ export const CATALOG = [
     key: 'games', title: 'Spiele', items: [
       { id: 'game_hilo', name: 'Höher oder Tiefer', price: 2000, desc: 'Rate die nächste Karte. Jeder Treffer erhöht den Multiplikator – kassier, bevor es kracht.', art: () => mini('7H', 8, 10, -10) + mini('back', 46, 4, 8) },
       { id: 'game_poker', name: 'Video-Poker', price: 5000, desc: 'Jacks or Better: fünf Karten, halten, nachziehen. Royal Flush zahlt 250-fach.', art: () => mini('1S', 2, 10, -12) + mini('13S', 30, 4, -2) + mini('12S', 58, 10, 9) },
+      { id: 'game_freecell', name: 'FreeCell', price: 2500, desc: 'Alle Karten offen, vier freie Zellen. Kein Glück, nur Köpfchen. Mit Spielnummern zum Nachspielen.', art: () => mini('13D', 4, 8, -10) + mini('12C', 30, 3, 0) + mini('11H', 56, 8, 10) },
+      { id: 'game_spider', name: 'Spider', price: 3500, desc: 'Zwei Decks, zehn Spalten, 1, 2 oder 4 Farben. Volle Folgen König bis Ass räumen ab.', art: () => mini('13S', 4, 4, -8) + mini('12S', 22, 14, -2) + mini('11S', 40, 24, 4) + mini('10S', 58, 34, 10) },
     ],
   },
   {

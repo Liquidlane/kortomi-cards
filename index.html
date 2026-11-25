@@ -17,6 +17,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Grenze+Gotisch:wght@500;700;900&display=swap">
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/patience.css">
 </head>
 <body>
   <!-- Hintergrund: angedeutetes Casino-Diorama -->
@@ -78,6 +79,16 @@
             <span class="pick-art" id="pick-art-poker"></span>
             <span class="pick-name">Poker</span>
             <span class="pick-desc">Video-Poker, Buben+</span>
+          </button>
+          <button class="pick pick-spider" data-go="spider" hidden>
+            <span class="pick-art" id="pick-art-spider"></span>
+            <span class="pick-name">Spider</span>
+            <span class="pick-desc">Zwei Decks, zehn Spalten</span>
+          </button>
+          <button class="pick pick-freecell" data-go="freecell" hidden>
+            <span class="pick-art" id="pick-art-freecell"></span>
+            <span class="pick-name">FreeCell</span>
+            <span class="pick-desc">Alles offen, vier Zellen</span>
           </button>
         </nav>
         <div class="lobby-links">
@@ -198,6 +209,62 @@
         <button class="ctl ctl-hot" id="sol-auto" hidden><span class="ico ico-magic"></span>Fertig legen</button>
       </footer>
       <div class="sol-mascot" id="sol-mascot"></div>
+    </section>
+
+    <!-- SPIDER (Shop) -->
+    <section class="screen game pat-screen" id="screen-spider">
+      <header class="topbar">
+        <button class="icon-btn back" data-go="lobby" aria-label="Zur Lobby"></button>
+        <div class="sol-meta">
+          <span><i>Zeit</i><b id="sp-time">0:00</b></span>
+          <span><i>Züge</i><b id="sp-moves">0</b></span>
+          <span><i>Punkte</i><b id="sp-score">500</b></span>
+        </div>
+        <div class="topbar-actions">
+          <button class="icon-btn js-sound" aria-label="Ton an/aus"></button>
+          <button class="icon-btn" data-open="settings" aria-label="Einstellungen"></button>
+        </div>
+      </header>
+      <div class="table sol-table pat-table" id="sp-table">
+        <div class="felt"></div>
+        <div class="slots-layer" id="sp-slots"></div>
+        <div class="cards-layer" id="sp-cards"></div>
+      </div>
+      <footer class="controls sol-controls">
+        <button class="ctl" id="sp-new"><span class="ico ico-new"></span>Neues Spiel</button>
+        <button class="ctl" id="sp-undo"><span class="ico ico-undo"></span>Zurück</button>
+        <button class="ctl" id="sp-hint"><span class="ico ico-bulb"></span>Tipp</button>
+        <button class="ctl" id="sp-deal"><span class="ico ico-magic"></span>Austeilen</button>
+      </footer>
+      <div class="sol-mascot" id="sp-mascot"></div>
+    </section>
+
+    <!-- FREECELL (Shop) -->
+    <section class="screen game pat-screen" id="screen-freecell">
+      <header class="topbar">
+        <button class="icon-btn back" data-go="lobby" aria-label="Zur Lobby"></button>
+        <div class="sol-meta">
+          <span><i>Zeit</i><b id="fc-time">0:00</b></span>
+          <span><i>Züge</i><b id="fc-moves">0</b></span>
+          <span><i>Spiel</i><b id="fc-deal">#1</b></span>
+        </div>
+        <div class="topbar-actions">
+          <button class="icon-btn js-sound" aria-label="Ton an/aus"></button>
+          <button class="icon-btn" data-open="settings" aria-label="Einstellungen"></button>
+        </div>
+      </header>
+      <div class="table sol-table pat-table" id="fc-table">
+        <div class="felt"></div>
+        <div class="slots-layer" id="fc-slots"></div>
+        <div class="cards-layer" id="fc-cards"></div>
+      </div>
+      <footer class="controls sol-controls">
+        <button class="ctl" id="fc-new"><span class="ico ico-new"></span>Neues Spiel</button>
+        <button class="ctl" id="fc-undo"><span class="ico ico-undo"></span>Zurück</button>
+        <button class="ctl" id="fc-hint"><span class="ico ico-bulb"></span>Tipp</button>
+        <button class="ctl ctl-hot" id="fc-auto" hidden><span class="ico ico-magic"></span>Fertig legen</button>
+      </footer>
+      <div class="sol-mascot" id="fc-mascot"></div>
     </section>
   </main>
 
