@@ -16,6 +16,7 @@ import { maybeTutorial, helpButton } from './tutorial.js';
 import { GAME_TUTORIALS } from './tutorials-games.js';
 import { enterSpider } from './spider.js';
 import { enterFreecell } from './freecell.js';
+import { enterSlots, slotsArt } from './slots.js';
 import { cloudHTML, bindCloud } from './cloud.js';
 import { shopHTML, bindShop, applyLook, dailyReady, claimDaily, DAILY_AMOUNT } from './shop.js';
 import { CATALOG, dailyAmount } from './shop.js';
@@ -28,7 +29,7 @@ const $$ = s => [...document.querySelectorAll(s)];
 
 // ---------- Start ----------
 buildSprite($('#sprite'));
-for (const k of ['pendingBet', 'pendingHl', 'pendingVp', 'pendingBac']) if (store.d[k]) { store.d.balance += store.d[k]; store.d[k] = 0; store.save(true); }
+for (const k of ['pendingBet', 'pendingHl', 'pendingVp', 'pendingBac', 'pendingSl']) if (store.d[k]) { store.d.balance += store.d[k]; store.d[k] = 0; store.save(true); }
 applyLook();
 
 function applySettings() {
@@ -55,13 +56,14 @@ function mini(id, x, y, r) { return `<span class="mini" style="left:${x}%;top:${
 $('#pick-art-bj').innerHTML = mini('1S', 14, 4, -12) + mini('13H', 44, 0, 10);
 $('#pick-art-sol').innerHTML = mini('back', 6, 6, -6) + mini('12C', 30, 2, 0) + mini('11D', 54, 6, 7);
 $('#pick-art-hilo').innerHTML = mini('7H', 10, 6, -10) + mini('back', 44, 2, 8);
+$('#pick-art-slots').innerHTML = slotsArt();
 $('#pick-art-poker').innerHTML = mini('1S', 4, 8, -12) + mini('13S', 29, 2, -2) + mini('12S', 54, 8, 9);
 $('#pick-art-baccarat').innerHTML = mini('9H', 12, 6, -9) + mini('13C', 44, 2, 8);
 $('#pick-art-spider').innerHTML = mini('13S', 6, 2, -8) + mini('12S', 28, 10, 0) + mini('11S', 50, 18, 8);
 $('#pick-art-freecell').innerHTML = mini('13D', 6, 6, -10) + mini('12C', 30, 2, 0) + mini('11H', 54, 6, 10);
 
 // Gekaufte Spiele in der Lobby zeigen, Tagesgeld-Knopf
-const GAMES = { hilo: 'game_hilo', poker: 'game_poker', baccarat: 'game_baccarat', spider: 'game_spider', freecell: 'game_freecell' };
+const GAMES = { hilo: 'game_hilo', poker: 'game_poker', baccarat: 'game_baccarat', spider: 'game_spider', freecell: 'game_freecell', slots: 'game_slots' };
 function refreshLobby() {
   let n = 2;
   for (const g in GAMES) { const on = owns(GAMES[g]); $(`.pick-${g}`).hidden = !on; if (on) n++; }
@@ -94,6 +96,7 @@ function go(name) {
   else if (name === 'baccarat') enterBaccarat();
   else if (name === 'spider') enterSpider();
   else if (name === 'freecell') enterFreecell();
+  else if (name === 'slots') enterSlots();
   else lobbyGreet();
   history.replaceState(null, '', name === 'lobby' ? location.pathname : `#${name}`);
   if (GAME_TUTORIALS[name]) maybeTutorial(name, GAME_TUTORIALS[name]);
@@ -136,6 +139,7 @@ pokeable($('#hl-dealer'), 'hl');
 pokeable($('#vp-dealer'), 'vp');
 pokeable($('#bac-dealer'), 'bac');
 for (const n of ['sp', 'fc']) pokeable($(`#${n}-mascot`), n, 'pokeSol', () => { const m = $(`#${n}-mascot`); m.classList.add('peek'); clearTimeout(m._peekT); m._peekT = setTimeout(() => m.classList.remove('peek'), 6000); });
+pokeable($('#sl-dealer'), 'sl');
 pokeable($('#sol-mascot'), 'sol', 'pokeSol', () => {
   const m = $('#sol-mascot'); m.classList.add('peek');
   clearTimeout(m._peekT); m._peekT = setTimeout(() => m.classList.remove('peek'), 6000);
@@ -225,7 +229,7 @@ function bindSettings(root) {
     store.d.settings[k] = k === 'draw3' ? v === 1 : v;
     seg.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x === b));
     store.save(); applySettings(); solitaireSettingChanged();
-    if (k === 'voicePitch') say({ lobby: 'lobby', blackjack: 'bj', solitaire: 'sol', hilo: 'hl', poker: 'vp', baccarat: 'bac', spider: 'sp', freecell: 'fc' }[current], pick('voiceTest'), { mood: 'wink', priority: 3 });
+    if (k === 'voicePitch') say({ lobby: 'lobby', blackjack: 'bj', solitaire: 'sol', hilo: 'hl', poker: 'vp', baccarat: 'bac', spider: 'sp', freecell: 'fc', slots: 'sl' }[current], pick('voiceTest'), { mood: 'wink', priority: 3 });
     else sfx.tap();
   }));
   root.querySelector('#reset-tutorials').addEventListener('click', () => { store.d.tutorials = {}; store.save(); sfx.tap(); toast('Tutorials zurückgesetzt', 'Kortomi erklärt dir jedes Spiel nochmal.'); });
@@ -254,7 +258,7 @@ function statsHTML() {
 
 function extraStats() {
   const st = (v, l) => `<div class="stat"><b>${v}</b><span>${l}</span></div>`;
-  const h = store.d.stats.hl, v = store.d.stats.vp;
+  const h = store.d.stats.hl, v = store.d.stats.vp, sl = store.d.stats.sl;
   const best = { royal: 'Royal Flush', sflush: 'Straight Flush', quads: 'Vierling', full: 'Full House', flush: 'Flush', straight: 'Straße', trips: 'Drilling', twopair: 'Zwei Paare', jacks: 'Buben+' };
   let out = '';
   if (owns('game_hilo')) out += `<div class="stat-block"><h3>Höher oder Tiefer</h3><div class="stat-grid">
@@ -270,6 +274,8 @@ function extraStats() {
     ${st(fmt(sp.played), 'Spiele')}${st(fmt(sp.won), 'Gewonnen')}${st(tm(sp.bestTime), 'Bestzeit')}${st(fmt(sp.won4), 'Siege mit 4 Farben')}${st(fmt(sp.chips), 'Chips erspielt')}</div></div>`;
   if (owns('game_freecell')) out += `<div class="stat-block"><h3>FreeCell</h3><div class="stat-grid">
     ${st(fmt(fc.played), 'Spiele')}${st(fmt(fc.won), 'Gewonnen')}${st(tm(fc.bestTime), 'Bestzeit')}${st(fmt(fc.chips), 'Chips erspielt')}</div></div>`;
+  if (owns('game_slots')) out += `<div class="stat-block"><h3>Spukautomat</h3><div class="stat-grid">
+    ${st(fmt(sl.spins), 'Drehungen')}${st(fmt(sl.wins), 'Gewinne')}${st(sl.wagered ? Math.round((sl.paid / sl.wagered) * 100) + ' %' : '–', 'Ausgezahlt')}${st(fmt(sl.biggestWin), 'Größter Gewinn')}${st(fmt(sl.jackpots), 'Dreimal Kortomi')}</div></div>`;
   return out;
 }
 
@@ -307,6 +313,7 @@ if ('serviceWorker' in navigator && location.protocol !== 'file:') {
       const n = current === 'spider' ? 'sp' : 'fc', m = document.getElementById(`${n}-mascot`);
       return { name: n, key: 'idleSol', onTalk: () => { m.classList.add('peek'); setTimeout(() => m.classList.remove('peek'), 6000); } };
     }
+    if (current === 'slots') return { name: 'sl', key: 'idle' };
     if (current === 'solitaire') {
       if (!store.d.settings.mascotSol) return null;
       const m = document.getElementById('sol-mascot');

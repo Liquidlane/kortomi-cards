@@ -1,6 +1,6 @@
 # Kortomi Cards
 
-Blackjack und Klondike-Solitaire mit Kortomi, der frechen Croupière. Reine Web-App ohne Build-Schritt, läuft auf Handy, Tablet und Computer und lässt sich als App installieren.
+Blackjack, Solitaire und weitere Casino- und Kartenspiele mit Kortomi, der frechen Croupière. Reine Web-App ohne Build-Schritt, läuft auf Handy, Tablet und Computer und lässt sich als App installieren.
 
 ## Lokal starten
 
@@ -48,3 +48,11 @@ Siehe `assets/custom/LIESMICH.txt`: `kortomi.png` (plus optionale Stimmungen) un
 | `js/cloud.js` | Cloud-Spielstand per 4-stelligem Code (Pantry) |
 | `js/fx.js` | Konfetti, Fledermäuse, Parallax des Casino-Dioramas |
 | `js/progress.js` | Tagesgeld-Serie, Tagesaufgabe (gleiches Solitaire-Blatt pro Datum), Zusatz-Erfolge, Statistik-Übersicht, Spielzeit und Chip-Bilanz |
+| `js/slots.js` | Kortomis Spukautomat: 3 Walzen, 5 Linien, Auszahlungsquote im Kopfkommentar (im Shop freischaltbar) |
+| `js/baccarat.js`, `js/baccarat-rules.js` | Baccarat (Punto Banco, ohne Kommission); Regeln separat und testbar |
+| `js/spider.js`, `js/freecell.js` | Spider (1/2/4 Farben) und FreeCell (mit Spielnummern), im Shop freischaltbar |
+| `js/patience.js`, `js/patience-rules.js` | Gemeinsame Helfer und reine Regeln für Spider/FreeCell |
+| `js/tutorial.js`, `js/tutorials-games.js` | Spielregel-Tutorials beim ersten Besuch, danach über den „?“-Knopf |
+| `js/music.js` | Generierter Lounge-Jazz (WebAudio, kein Fremdmaterial), Schalter in den Einstellungen |
+| `js/streaks.js`, `js/lines-streak.js` | Croupier-Reaktionen auf Gewinn- und Pechsträhnen |
+| `js/winter.js` | Winter-Deko (1. Dez. – 6. Jan. automatisch): Schnee, Lichterkette, Mützen, Wintersprüche |

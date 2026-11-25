@@ -7,6 +7,7 @@ const CORE = [
   'js/baccarat.js', 'js/baccarat-rules.js', 'js/tutorials-games.js', 'css/baccarat.css',
   'js/music.js', 'js/streaks.js', 'js/lines-streak.js', 'js/winter.js', 'css/winter.css',
   'js/spider.js', 'js/freecell.js', 'js/patience.js', 'js/patience-rules.js', 'css/patience.css',
+  'js/slots.js', 'css/slots.css',
   'assets/icon.svg', 'assets/icon-180.png', 'assets/icon-192.png', 'assets/icon-512.png',
 ];
 self.addEventListener('install', e => {

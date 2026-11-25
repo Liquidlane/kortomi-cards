@@ -7,6 +7,7 @@ import { fmt, updateBalance, toast } from './ui.js';
 import { burst } from './fx.js';
 import { clerkHTML, clerkEvent, chocSVG } from './clerk.js';
 import { claimStreak, nextStreak, streakBonus } from './progress.js';
+import { slotsArt } from './slots.js';
 
 // Figur-Vorschau mit eigenen Verlauf-IDs, damit sie nicht mit den Tisch-Figuren kollidiert
 const figure = (svg, tag) => svg.replace(/id="k-([\w-]+)"/g, `id="k-$1-${tag}"`).replace(/url\(#k-([\w-]+)\)/g, `url(#k-$1-${tag})`);
@@ -17,6 +18,7 @@ export const CATALOG = [
   {
     key: 'games', title: 'Spiele', items: [
       { id: 'game_hilo', name: 'Höher oder Tiefer', price: 2000, desc: 'Rate die nächste Karte. Jeder Treffer erhöht den Multiplikator – kassier, bevor es kracht.', art: () => mini('7H', 8, 10, -10) + mini('back', 46, 4, 8) },
+      { id: 'game_slots', name: 'Kortomis Spukautomat', price: 3500, desc: 'Spielautomat mit drei Walzen und fünf Linien. Kortomi ist der Joker – dreimal sie zahlt 50-fach.', art: () => `<span class="shop-slots">${slotsArt()}</span>` },
       { id: 'game_poker', name: 'Video-Poker', price: 5000, desc: 'Jacks or Better: fünf Karten, halten, nachziehen. Royal Flush zahlt 250-fach.', art: () => mini('1S', 2, 10, -12) + mini('13S', 30, 4, -2) + mini('12S', 58, 10, 9) },
       { id: 'game_baccarat', name: 'Baccarat', price: 4000, desc: 'Punto Banco: Setz auf Spieler, Bank oder Unentschieden. Wer näher an der 9 liegt, gewinnt. Unentschieden zahlt 8:1.', art: () => mini('9H', 8, 8, -9) + mini('13C', 46, 4, 8) },
       { id: 'game_freecell', name: 'FreeCell', price: 2500, desc: 'Alle Karten offen, vier freie Zellen. Kein Glück, nur Köpfchen. Mit Spielnummern zum Nachspielen.', art: () => mini('13D', 4, 8, -10) + mini('12C', 30, 3, 0) + mini('11H', 56, 8, 10) },
