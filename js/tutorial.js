@@ -82,7 +82,13 @@ export const tutorialSeen = k => !!store.d.tutorials?.[k];
 // Beim ersten Betreten automatisch zeigen (kurz verzögert, damit der Bildschirm schon steht).
 export function maybeTutorial(k, list, delay = 450) {
   if (tutorialSeen(k)) return false;
-  setTimeout(() => { if (!tutorialSeen(k)) showTutorial(k, list); }, delay);
+  // Nur zeigen, wenn man noch auf demselben Bildschirm ist (nicht schon weitergetippt).
+  const screen = document.querySelector('.screen[data-active]');
+  setTimeout(() => {
+    if (tutorialSeen(k) || host?.classList.contains('show')) return;
+    if (screen && !screen.hasAttribute('data-active')) return;
+    showTutorial(k, list);
+  }, delay);
   return true;
 }
 
