@@ -1,0 +1,83 @@
+/* Fortschritt & Motivation: Tagesgeld-Serie, Tagesaufgabe, Statistik-Übersicht, gruppierte Erfolge */
+
+/* ---------- Lobby ---------- */
+.chal-link { color: var(--lilac-soft); box-shadow: inset 0 0 0 1.5px rgba(184,156,255,.4); }
+.chal-link.done { color: #9ff0b8; box-shadow: inset 0 0 0 1.5px rgba(159,240,184,.35); }
+
+/* Tagesaufgabe im Solitaire-Tisch markieren */
+#screen-solitaire.is-challenge .sol-meta { position: relative; }
+#screen-solitaire.is-challenge .sol-meta::after {
+  content: "Tagesaufgabe"; position: absolute; left: 50%; top: 100%; transform: translate(-50%, 3px);
+  padding: 1px 9px; border-radius: 99px; font-size: 11px; font-weight: 600; letter-spacing: .02em; white-space: nowrap;
+  color: #2a1238; background: linear-gradient(180deg, #f3d595, #c9963f);
+}
+
+/* ---------- Tagesgeld-Karte mit 7-Tage-Leiste ---------- */
+.prog-pop {
+  position: fixed; inset: 0; z-index: 85; display: grid; place-items: center; padding: 16px;
+  background: rgba(10, 3, 16, .55); backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px);
+  animation: prog-fade .25s ease-out both;
+}
+.prog-pop.out { animation: prog-fade .25s ease-in reverse both; }
+@keyframes prog-fade { from { opacity: 0; } }
+.prog-card {
+  width: min(400px, 100%); padding: 20px 18px 18px; border-radius: 24px; text-align: center;
+  background: linear-gradient(180deg, #3d1a55, #24102f);
+  box-shadow: inset 0 0 0 1.5px var(--brass), 0 20px 50px rgba(0,0,0,.6), 0 0 40px rgba(232,194,122,.2);
+  animation: prog-pop .5s var(--ease-spring) both;
+}
+@keyframes prog-pop { from { transform: scale(.85) translateY(20px); opacity: 0; } }
+.prog-card h3 { margin: 0; font-family: var(--f-goth); font-size: 36px; color: var(--brass); line-height: 1.05; }
+.prog-card p { margin: 6px 0 14px; color: var(--text-dim); font-size: 14.5px; }
+.prog-card p.lost { margin: 12px 0 0; color: var(--candy); font-size: 13.5px; }
+.prog-card .btn { margin-top: 16px; }
+.streak-strip { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
+.streak-strip li {
+  display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 7px 0 6px; border-radius: 12px;
+  background: rgba(184,156,255,.08); color: var(--text-dim); font-variant-numeric: tabular-nums;
+}
+.streak-strip span { font-size: 10.5px; }
+.streak-strip b { font-size: 12px; font-weight: 600; }
+.streak-strip li.done { background: rgba(232,194,122,.18); color: var(--brass); }
+.streak-strip li.now { background: linear-gradient(180deg, #ff7ab4, #e0307a); color: #fff; box-shadow: 0 6px 16px rgba(224,48,122,.45); animation: prog-now 1.4s ease-in-out infinite; }
+@keyframes prog-now { 50% { transform: translateY(-3px); } }
+
+/* ---------- Statistik ---------- */
+.stat-hero {
+  padding: 14px; border-radius: 20px; margin-top: 4px;
+  background: linear-gradient(160deg, rgba(255,95,162,.14), rgba(184,156,255,.08));
+  box-shadow: inset 0 0 0 1.5px rgba(232,194,122,.25);
+}
+.hero-main { display: flex; flex-direction: column; margin: 0 2px 10px; }
+.hero-main span { font-size: 13px; color: var(--text-dim); }
+.hero-main b { font-family: var(--f-goth); font-size: 30px; line-height: 1.05; color: var(--bone); }
+.stat-hero .stat-grid { grid-template-columns: repeat(3, 1fr); }
+.stat-hero .stat b { font-size: 19px; }
+.stat-hero .stat span { font-size: 12px; }
+.stat.pos b { color: #9ff0b8; }
+.stat.neg b { color: #ff8fb8; }
+.stat-hero .hint { margin: 10px 2px 0; font-size: 13px; color: var(--text-dim); }
+.time-bars { list-style: none; margin: 12px 0 0; padding: 0; display: grid; gap: 6px; }
+.time-bars li { display: grid; grid-template-columns: 7.5em 1fr auto; align-items: center; gap: 8px; font-size: 13px; }
+.time-bars span { color: var(--text-dim); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.time-bars i { display: block; height: 8px; border-radius: 99px; background: rgba(184,156,255,.12); position: relative; overflow: hidden; }
+.time-bars i::before { content: ""; position: absolute; inset: 0 auto 0 0; width: var(--w); border-radius: inherit; background: linear-gradient(90deg, var(--candy), var(--brass)); }
+.time-bars b { font-weight: 600; font-variant-numeric: tabular-nums; }
+/* Spielkarten der Statistik als eigene Kacheln */
+#sheet-body .stat-block { margin-top: 12px; padding: 4px 12px 12px; border-radius: 20px; background: rgba(184,156,255,.05); box-shadow: inset 0 0 0 1px rgba(184,156,255,.14); }
+#sheet-body .stat-block h3 { margin: 10px 2px 8px; }
+@media (max-width: 380px) { .stat-hero .stat-grid { grid-template-columns: repeat(2, 1fr); } }
+
+/* ---------- Erfolge ---------- */
+.ach-total { height: 8px; border-radius: 99px; background: rgba(184,156,255,.12); overflow: hidden; margin: -6px 0 6px; }
+.ach-total i { display: block; height: 100%; width: var(--w); background: linear-gradient(90deg, var(--candy), var(--brass)); border-radius: inherit; }
+.ach-group h3 { display: flex; align-items: baseline; gap: 8px; margin: 18px 2px 8px; font-family: var(--f-goth); font-size: 24px; font-weight: 700; color: var(--candy); }
+.ach-group h3 small { font-family: var(--f-ui); font-size: 13px; font-weight: 500; color: var(--text-dim); }
+.ach-txt { flex: 1; min-width: 0; }
+.ach-bar { display: flex; align-items: center; gap: 8px; margin-top: 5px; }
+.ach-bar i { flex: 1; height: 6px; border-radius: 99px; background: rgba(184,156,255,.14); position: relative; overflow: hidden; }
+.ach-bar i::before { content: ""; position: absolute; inset: 0 auto 0 0; width: var(--w); border-radius: inherit; background: var(--lilac); }
+.ach-bar span { font-size: 12px; color: var(--text-dim); font-variant-numeric: tabular-nums; }
+
+@media (prefers-reduced-motion: reduce) { .streak-strip li.now, .prog-card, .prog-pop { animation: none; } }
+.reduce-motion .streak-strip li.now, .reduce-motion .prog-card, .reduce-motion .prog-pop { animation: none; }

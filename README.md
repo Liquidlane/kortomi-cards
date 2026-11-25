@@ -47,3 +47,4 @@ Siehe `assets/custom/LIESMICH.txt`: `kortomi.png` (plus optionale Stimmungen) un
 | `js/store.js` | Speicherstand, Statistik, Erfolge |
 | `js/cloud.js` | Cloud-Spielstand per 4-stelligem Code (Pantry) |
 | `js/fx.js` | Konfetti, Fledermäuse, Parallax des Casino-Dioramas |
+| `js/progress.js` | Tagesgeld-Serie, Tagesaufgabe (gleiches Solitaire-Blatt pro Datum), Zusatz-Erfolge, Statistik-Übersicht, Spielzeit und Chip-Bilanz |
