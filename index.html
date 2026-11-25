@@ -17,6 +17,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Grenze+Gotisch:wght@500;700;900&display=swap">
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/slots.css">
 </head>
 <body>
   <!-- Hintergrund: angedeutetes Casino-Diorama -->
@@ -78,6 +79,11 @@
             <span class="pick-art" id="pick-art-poker"></span>
             <span class="pick-name">Poker</span>
             <span class="pick-desc">Video-Poker, Buben+</span>
+          </button>
+          <button class="pick pick-slots" data-go="slots" hidden>
+            <span class="pick-art" id="pick-art-slots"></span>
+            <span class="pick-name">Spuk</span>
+            <span class="pick-desc">Spielautomat, 5 Linien</span>
           </button>
         </nav>
         <div class="lobby-links">
@@ -169,6 +175,29 @@
       <footer class="controls bj-controls">
         <div class="chip-rack" id="vp-rack"></div>
         <div class="action-row" id="vp-actions"></div>
+      </footer>
+    </section>
+
+    <!-- SPUKAUTOMAT (Shop) -->
+    <section class="screen game" id="screen-slots">
+      <header class="topbar">
+        <button class="icon-btn back" data-go="lobby" aria-label="Zur Lobby"></button>
+        <div class="balance-pill"><span class="chip-ico"></span><span class="js-balance">1.000</span></div>
+        <div class="topbar-actions">
+          <button class="icon-btn js-sound" aria-label="Ton an/aus"></button>
+          <button class="icon-btn" data-open="settings" aria-label="Einstellungen"></button>
+        </div>
+      </header>
+      <div class="table side-table slm-table" id="sl-table">
+        <div class="felt"></div>
+        <div class="side-dealer" id="sl-dealer"></div>
+        <div class="slm-pay" id="sl-pay" aria-label="Gewinntabelle"></div>
+        <div class="slm-machine" id="sl-machine"></div>
+        <div class="badges-layer" id="sl-badges"></div>
+      </div>
+      <footer class="controls bj-controls">
+        <div class="chip-rack" id="sl-rack"></div>
+        <div class="action-row" id="sl-actions"></div>
       </footer>
     </section>
 

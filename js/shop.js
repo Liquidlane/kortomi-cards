@@ -6,6 +6,7 @@ import { sfx } from './audio.js';
 import { fmt, updateBalance, toast } from './ui.js';
 import { burst } from './fx.js';
 import { clerkHTML, clerkEvent, chocSVG } from './clerk.js';
+import { slotsArt } from './slots.js';
 
 // Figur-Vorschau mit eigenen Verlauf-IDs, damit sie nicht mit den Tisch-Figuren kollidiert
 const figure = (svg, tag) => svg.replace(/id="k-([\w-]+)"/g, `id="k-$1-${tag}"`).replace(/url\(#k-([\w-]+)\)/g, `url(#k-$1-${tag})`);
@@ -16,6 +17,7 @@ export const CATALOG = [
   {
     key: 'games', title: 'Spiele', items: [
       { id: 'game_hilo', name: 'Höher oder Tiefer', price: 2000, desc: 'Rate die nächste Karte. Jeder Treffer erhöht den Multiplikator – kassier, bevor es kracht.', art: () => mini('7H', 8, 10, -10) + mini('back', 46, 4, 8) },
+      { id: 'game_slots', name: 'Kortomis Spukautomat', price: 3500, desc: 'Spielautomat mit drei Walzen und fünf Linien. Kortomi ist der Joker – dreimal sie zahlt 50-fach.', art: () => `<span class="shop-slots">${slotsArt()}</span>` },
       { id: 'game_poker', name: 'Video-Poker', price: 5000, desc: 'Jacks or Better: fünf Karten, halten, nachziehen. Royal Flush zahlt 250-fach.', art: () => mini('1S', 2, 10, -12) + mini('13S', 30, 4, -2) + mini('12S', 58, 10, 9) },
     ],
   },

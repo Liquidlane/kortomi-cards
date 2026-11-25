@@ -2,7 +2,7 @@
 const VERSION = 'kortomi-v12';
 const CORE = [
   './', 'index.html', 'manifest.webmanifest', 'css/style.css',
-  'js/app.js', 'js/art.js', 'js/audio.js', 'js/blackjack.js', 'js/cards.js', 'js/fx.js', 'js/mascot.js', 'js/solitaire.js', 'js/store.js', 'js/ui.js', 'js/voice.js', 'js/lines-extra.js', 'js/cascade.js', 'js/shop.js', 'js/hilo.js', 'js/poker.js', 'js/clerk.js', 'js/lines-choc.js', 'js/cloud.js', 'js/tutorial.js',
+  'js/app.js', 'js/art.js', 'js/audio.js', 'js/blackjack.js', 'js/cards.js', 'js/fx.js', 'js/mascot.js', 'js/solitaire.js', 'js/store.js', 'js/ui.js', 'js/voice.js', 'js/lines-extra.js', 'js/cascade.js', 'js/shop.js', 'js/hilo.js', 'js/poker.js', 'js/clerk.js', 'js/lines-choc.js', 'js/cloud.js', 'js/tutorial.js', 'js/slots.js', 'css/slots.css',
   'assets/icon.svg', 'assets/icon-180.png', 'assets/icon-192.png', 'assets/icon-512.png',
 ];
 self.addEventListener('install', e => {

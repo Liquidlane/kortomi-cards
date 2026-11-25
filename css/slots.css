@@ -1,0 +1,107 @@
+/* ==========================================================================
+   Kortomis Spukautomat (js/slots.js) — Maße hängen an --s (Kantenlänge einer Walzen-Zelle)
+   ========================================================================== */
+.slm-machine {
+  --s: 80px;
+  position: absolute; left: 50%; top: 0; z-index: 3;
+  width: calc(var(--s) * 3.62); transform: translateX(-50%);
+  padding: calc(var(--s) * .1) calc(var(--s) * .12) calc(var(--s) * .12);
+  border-radius: calc(var(--s) * .3);
+  background:
+    radial-gradient(120% 60% at 50% 0%, rgba(255, 95, 162, .22), transparent 60%),
+    linear-gradient(180deg, #4a2363, var(--plum) 55%, #1d0c29);
+  box-shadow: inset 0 0 0 2.5px var(--brass), inset 0 0 0 6px #2a1238, inset 0 0 0 7.5px rgba(232,194,122,.35), 0 18px 40px rgba(0,0,0,.55), 0 0 40px rgba(255,95,162,.18);
+}
+/* Fledermausohren oben auf dem Gehäuse */
+.slm-machine::before, .slm-machine::after {
+  content: ''; position: absolute; top: calc(var(--s) * -.2); width: calc(var(--s) * .42); height: calc(var(--s) * .34);
+  background: #231530; clip-path: polygon(0 100%, 30% 0, 100% 100%);
+}
+.slm-machine::before { left: calc(var(--s) * .4); transform: rotate(-12deg); }
+.slm-machine::after { right: calc(var(--s) * .4); transform: scaleX(-1) rotate(-12deg); }
+
+.slm-marquee {
+  position: relative; text-align: center; line-height: .95; height: calc(var(--s) * .62);
+  display: flex; flex-direction: column; justify-content: center;
+}
+.slm-marquee span { font-family: var(--f-ui); font-weight: 600; font-size: calc(var(--s) * .13); letter-spacing: .3em; color: var(--lilac-soft); text-transform: uppercase; }
+.slm-marquee b {
+  font-family: var(--f-goth); font-weight: 900; font-size: calc(var(--s) * .4); color: #ffd1e6;
+  text-shadow: 0 0 6px var(--candy), 0 0 18px rgba(255,95,162,.8), 0 2px 0 #5a1236;
+}
+.slm-machine.won .slm-marquee b { animation: slm-neon .5s steps(2) 4; }
+@keyframes slm-neon { 50% { color: #fff; text-shadow: 0 0 10px #fff, 0 0 26px var(--candy), 0 0 40px var(--candy); } }
+
+.slm-window { position: relative; padding-left: calc(var(--s) * .34); }
+.slm-nums { position: absolute; left: 0; top: 0; bottom: 0; width: calc(var(--s) * .3); }
+.slm-nums i {
+  position: absolute; left: 0; width: calc(var(--s) * .26); height: calc(var(--s) * .26); transform: translateY(-50%);
+  display: grid; place-items: center; border-radius: 50%; font-style: normal; font-weight: 700; font-size: calc(var(--s) * .15);
+  color: #1d0c29; background: var(--c); opacity: .5; box-shadow: 0 0 0 1.5px rgba(0,0,0,.35);
+  transition: opacity .2s, transform .2s, box-shadow .2s;
+}
+.slm-nums i.on { opacity: 1; transform: translateY(-50%) scale(1.18); box-shadow: 0 0 0 2px #fff, 0 0 12px var(--c); }
+
+.slm-reels {
+  position: relative; display: grid; grid-template-columns: repeat(3, var(--s)); height: calc(var(--s) * 3);
+  border-radius: calc(var(--s) * .14); overflow: hidden;
+  box-shadow: 0 0 0 3px #170b20, 0 0 0 5px var(--brass-deep);
+  background: #170b20; gap: 0;
+}
+.slm-reel {
+  position: relative; overflow: hidden; height: calc(var(--s) * 3);
+  background: linear-gradient(180deg, #d9c8ea, #fbf5ff 30%, #fff 50%, #fbf5ff 70%, #d9c8ea);
+}
+.slm-reel + .slm-reel { box-shadow: inset 2px 0 0 rgba(23,11,32,.55); }
+.slm-strip { position: absolute; left: 0; top: 0; width: 100%; will-change: transform; transition: opacity .18s; }
+.slm-strip.fade { opacity: .25; transition: none; }
+.slm-reel.spinning .slm-strip { filter: blur(1.2px); }
+.slm-reel.thud { animation: slm-thud .22s var(--ease-out); }
+@keyframes slm-thud { 40% { transform: translateY(3px); } }
+.slm-cell { width: var(--s); height: var(--s); display: grid; place-items: center; }
+.slm-cell svg { width: 78%; height: 78%; display: block; filter: drop-shadow(0 2px 2px rgba(42,18,56,.3)); }
+.slm-cell.win svg { animation: slm-pop .7s var(--ease-spring) infinite alternate; filter: drop-shadow(0 0 6px rgba(255,95,162,.9)) drop-shadow(0 2px 2px rgba(42,18,56,.3)); }
+.slm-cell.win { background: radial-gradient(circle, rgba(255,215,110,.55), transparent 70%); }
+@keyframes slm-pop { from { transform: scale(1); } to { transform: scale(1.12); } }
+
+/* Gewinnlinien über den Walzen; nur gewonnene leuchten */
+.slm-lines { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 2; }
+.slm-lines polyline { fill: none; stroke: var(--c); stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; opacity: 0; transition: opacity .25s; filter: drop-shadow(0 0 4px var(--c)); }
+.slm-lines polyline.on { opacity: .9; animation: slm-line 1s ease-in-out infinite alternate; }
+@keyframes slm-line { to { opacity: .45; } }
+/* Leichte Glas-Wölbung */
+.slm-glass { position: absolute; inset: 0; z-index: 3; pointer-events: none; background: linear-gradient(180deg, rgba(23,11,32,.45), transparent 22%, transparent 78%, rgba(23,11,32,.45)); }
+
+.slm-led {
+  margin: calc(var(--s) * .12) 0 0 calc(var(--s) * .34); height: calc(var(--s) * .4);
+  display: flex; align-items: center; justify-content: center; padding: 0 8px;
+  border-radius: calc(var(--s) * .1); background: #12081a; box-shadow: inset 0 0 0 1.5px rgba(184,156,255,.25), inset 0 3px 8px rgba(0,0,0,.6);
+  font-weight: 600; font-size: clamp(11px, calc(var(--s) * .15), 16px); color: var(--lilac-soft); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  font-variant-numeric: tabular-nums;
+}
+.slm-led b { color: #ffd76e; margin-left: .3em; }
+
+/* Gewinntabelle oben rechts neben Kortomi */
+.slm-pay {
+  position: absolute; right: 8px; top: 8px; z-index: 3;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 1px 6px; align-content: start;
+  padding: 6px 8px; border-radius: 14px; font-size: clamp(11px, 2.9vw, 14px);
+  background: rgba(23, 11, 32, .6); box-shadow: inset 0 0 0 1.5px rgba(232,194,122,.4);
+  font-variant-numeric: tabular-nums; pointer-events: none; max-width: 340px; margin-left: auto;
+}
+.slm-pr { display: flex; align-items: center; gap: 3px; padding: 1px 5px; border-radius: 6px; color: var(--lilac-soft); line-height: 1.3; min-width: 0; }
+.slm-pr em { font-style: normal; font-size: .85em; opacity: .8; min-width: 1.6em; }
+.slm-pr i { width: 1.45em; height: 1.45em; flex: none; }
+.slm-pr i svg { width: 100%; height: 100%; display: block; }
+.slm-pr b { margin-left: auto; color: var(--brass); font-weight: 600; }
+.slm-pr.hit { background: var(--candy); color: #fff; }
+.slm-pr.hit b { color: #fff; }
+.slm-pr.note span { font-size: .85em; opacity: .85; white-space: nowrap; }
+
+.slm-spin { min-width: 160px; }
+
+/* Lobby-Karte & Shop-Vorschau */
+#pick-art-slots .slm-art { position: absolute; left: 50%; top: 50%; width: 78%; height: 92%; transform: translate(-50%, -50%) rotate(-3deg); filter: drop-shadow(0 6px 10px rgba(0,0,0,.5)); }
+.pick-slots:hover { transform: translateY(-4px) rotate(-1deg); }
+.shop-slots { display: block; width: 64px; height: 64px; }
+.shop-slots .slm-art { width: 100%; height: 100%; display: block; filter: drop-shadow(0 4px 6px rgba(0,0,0,.45)); }

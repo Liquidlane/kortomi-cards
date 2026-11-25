@@ -124,6 +124,10 @@ export const sfx = {
   push() { if (!ok()) return; const t = now(); bell(t, 587.33, 0.5, 0.04); bell(t + 0.16, 587.33, 0.6, 0.035); },
   sparkle() { if (!ok()) return; const t = now(); [1046.5, 1318.5, 1568, 2093].forEach((f, i) => tone(t + i * 0.07, f, 0.6, { gain: 0.02, wet: 0.9 })); },
   whoosh() { if (!ok()) return; noise(now(), 0.3, { freq: 600, q: 0.5, gain: 0.06, attack: 0.1, sweep: 2.2 }); },
+  // Spukautomat: Anlaufen, Klackern beim Drehen, dumpfer Halt einer Walze
+  reelStart() { if (!ok()) return; const t = now(); tone(t, 180, 0.35, { type: 'triangle', gain: 0.035, slide: 2.4, wet: 0.2 }); noise(t, 0.25, { freq: 900, q: 0.6, gain: 0.04, attack: 0.04, sweep: 1.8 }); },
+  reelTick() { if (!ok()) return; noise(now(), 0.03, { freq: 2600 + Math.random() * 600, q: 2, gain: 0.025, attack: 0.002 }); },
+  reelStop() { if (!ok()) return; const t = now(); noise(t, 0.09, { type: 'lowpass', freq: 700, q: 0.8, gain: 0.14 }); tone(t, 92, 0.12, { type: 'triangle', gain: 0.06, slide: 0.7, wet: 0.05 }); tone(t + 0.01, 1240, 0.05, { gain: 0.015, wet: 0.2 }); },
 };
 
 // Kortomis Brabbel-Stimme: ein Buchstaben-Sample pro Zeichen, schnell und hochgepitcht
