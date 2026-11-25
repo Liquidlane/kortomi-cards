@@ -14,6 +14,8 @@ import { enterPoker } from './poker.js';
 import { enterBaccarat } from './baccarat.js';
 import { maybeTutorial, helpButton } from './tutorial.js';
 import { GAME_TUTORIALS } from './tutorials-games.js';
+import { enterSpider } from './spider.js';
+import { enterFreecell } from './freecell.js';
 import { cloudHTML, bindCloud } from './cloud.js';
 import { shopHTML, bindShop, applyLook, dailyReady, claimDaily, DAILY_AMOUNT } from './shop.js';
 import { CATALOG, dailyAmount } from './shop.js';
@@ -55,9 +57,11 @@ $('#pick-art-sol').innerHTML = mini('back', 6, 6, -6) + mini('12C', 30, 2, 0) + 
 $('#pick-art-hilo').innerHTML = mini('7H', 10, 6, -10) + mini('back', 44, 2, 8);
 $('#pick-art-poker').innerHTML = mini('1S', 4, 8, -12) + mini('13S', 29, 2, -2) + mini('12S', 54, 8, 9);
 $('#pick-art-baccarat').innerHTML = mini('9H', 12, 6, -9) + mini('13C', 44, 2, 8);
+$('#pick-art-spider').innerHTML = mini('13S', 6, 2, -8) + mini('12S', 28, 10, 0) + mini('11S', 50, 18, 8);
+$('#pick-art-freecell').innerHTML = mini('13D', 6, 6, -10) + mini('12C', 30, 2, 0) + mini('11H', 54, 6, 10);
 
 // Gekaufte Spiele in der Lobby zeigen, Tagesgeld-Knopf
-const GAMES = { hilo: 'game_hilo', poker: 'game_poker', baccarat: 'game_baccarat' };
+const GAMES = { hilo: 'game_hilo', poker: 'game_poker', baccarat: 'game_baccarat', spider: 'game_spider', freecell: 'game_freecell' };
 function refreshLobby() {
   let n = 2;
   for (const g in GAMES) { const on = owns(GAMES[g]); $(`.pick-${g}`).hidden = !on; if (on) n++; }
@@ -88,6 +92,8 @@ function go(name) {
   else if (name === 'hilo') enterHilo();
   else if (name === 'poker') enterPoker();
   else if (name === 'baccarat') enterBaccarat();
+  else if (name === 'spider') enterSpider();
+  else if (name === 'freecell') enterFreecell();
   else lobbyGreet();
   history.replaceState(null, '', name === 'lobby' ? location.pathname : `#${name}`);
   if (GAME_TUTORIALS[name]) maybeTutorial(name, GAME_TUTORIALS[name]);
@@ -129,6 +135,7 @@ pokeable($('#bj-dealer'), 'bj', 'pokeBj');
 pokeable($('#hl-dealer'), 'hl');
 pokeable($('#vp-dealer'), 'vp');
 pokeable($('#bac-dealer'), 'bac');
+for (const n of ['sp', 'fc']) pokeable($(`#${n}-mascot`), n, 'pokeSol', () => { const m = $(`#${n}-mascot`); m.classList.add('peek'); clearTimeout(m._peekT); m._peekT = setTimeout(() => m.classList.remove('peek'), 6000); });
 pokeable($('#sol-mascot'), 'sol', 'pokeSol', () => {
   const m = $('#sol-mascot'); m.classList.add('peek');
   clearTimeout(m._peekT); m._peekT = setTimeout(() => m.classList.remove('peek'), 6000);
@@ -218,7 +225,7 @@ function bindSettings(root) {
     store.d.settings[k] = k === 'draw3' ? v === 1 : v;
     seg.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x === b));
     store.save(); applySettings(); solitaireSettingChanged();
-    if (k === 'voicePitch') say({ lobby: 'lobby', blackjack: 'bj', solitaire: 'sol', hilo: 'hl', poker: 'vp', baccarat: 'bac' }[current], pick('voiceTest'), { mood: 'wink', priority: 3 });
+    if (k === 'voicePitch') say({ lobby: 'lobby', blackjack: 'bj', solitaire: 'sol', hilo: 'hl', poker: 'vp', baccarat: 'bac', spider: 'sp', freecell: 'fc' }[current], pick('voiceTest'), { mood: 'wink', priority: 3 });
     else sfx.tap();
   }));
   root.querySelector('#reset-tutorials').addEventListener('click', () => { store.d.tutorials = {}; store.save(); sfx.tap(); toast('Tutorials zurückgesetzt', 'Kortomi erklärt dir jedes Spiel nochmal.'); });
@@ -257,6 +264,12 @@ function extraStats() {
   const c = store.d.stats.bac;
   if (owns('game_baccarat')) out += `<div class="stat-block"><h3>Baccarat</h3><div class="stat-grid">
     ${st(fmt(c.rounds), 'Runden')}${st(fmt(c.wins), 'Gewonnen')}${st(fmt(c.naturals), 'Naturals')}${st(`${fmt(c.player)} : ${fmt(c.bank)} : ${fmt(c.ties)}`, 'Spieler : Bank : Unent.')}${st(fmt(c.tieWins), 'Unentschieden getroffen')}${st(fmt(c.biggestWin), 'Größter Gewinn')}</div></div>`;
+  const tm = sec => (sec ? `${Math.floor(sec / 60)}:${String(sec % 60).padStart(2, '0')}` : '–');
+  const sp = store.d.stats.sp, fc = store.d.stats.fc;
+  if (owns('game_spider')) out += `<div class="stat-block"><h3>Spider</h3><div class="stat-grid">
+    ${st(fmt(sp.played), 'Spiele')}${st(fmt(sp.won), 'Gewonnen')}${st(tm(sp.bestTime), 'Bestzeit')}${st(fmt(sp.won4), 'Siege mit 4 Farben')}${st(fmt(sp.chips), 'Chips erspielt')}</div></div>`;
+  if (owns('game_freecell')) out += `<div class="stat-block"><h3>FreeCell</h3><div class="stat-grid">
+    ${st(fmt(fc.played), 'Spiele')}${st(fmt(fc.won), 'Gewonnen')}${st(tm(fc.bestTime), 'Bestzeit')}${st(fmt(fc.chips), 'Chips erspielt')}</div></div>`;
   return out;
 }
 
@@ -289,6 +302,11 @@ if ('serviceWorker' in navigator && location.protocol !== 'file:') {
     if (current === 'hilo') return { name: 'hl', key: 'idle' };
     if (current === 'poker') return { name: 'vp', key: 'idle' };
     if (current === 'baccarat') return { name: 'bac', key: 'idle' };
+    if (current === 'spider' || current === 'freecell') {
+      if (!store.d.settings.mascotSol) return null;
+      const n = current === 'spider' ? 'sp' : 'fc', m = document.getElementById(`${n}-mascot`);
+      return { name: n, key: 'idleSol', onTalk: () => { m.classList.add('peek'); setTimeout(() => m.classList.remove('peek'), 6000); } };
+    }
     if (current === 'solitaire') {
       if (!store.d.settings.mascotSol) return null;
       const m = document.getElementById('sol-mascot');

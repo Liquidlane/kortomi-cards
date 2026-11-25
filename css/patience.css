@@ -1,0 +1,36 @@
+/* Spider & FreeCell (js/spider.js, js/freecell.js). Baut auf den Solitaire-Regeln in style.css auf. */
+
+/* Spider: eine breite Ablage für alle acht Folgen */
+.pat-table .slot-mark.pat-found { place-items: center start; padding-left: calc(var(--cw) * .2); }
+.pat-found-lbl { font-family: var(--f-ui); font-weight: 600; font-size: clamp(11px, calc(var(--cw) * .32), 22px); letter-spacing: .04em; }
+.pat-table .slot-mark.stock.pat-empty { opacity: .45; }
+.pat-table .slot-mark.tabslot { border-style: dashed; border-color: rgba(217, 204, 255, .12); }
+
+/* FreeCell: freie Zellen etwas wärmer abgesetzt */
+.pat-table .slot-mark.pat-cell { border-color: rgba(232, 194, 122, .28); background: rgba(232, 194, 122, .06); color: rgba(232, 194, 122, .3); }
+
+/* Leere Spalte zeigt beim gesperrten Austeilen, wo es hakt */
+.slot-mark.shake { animation: pat-shake .36s; }
+@keyframes pat-shake { 20%, 60% { translate: -5px 0; } 40%, 80% { translate: 5px 0; } }
+
+/* Auswahlfenster „Neues Spiel“ */
+.pat-seg-row { display: flex; flex-direction: column; align-items: center; gap: 6px; margin: 0 0 16px; font-size: 13px; color: var(--text-dim); }
+.pat-seg-row .seg button { padding: 7px 12px; }
+.pat-num { display: flex; align-items: center; justify-content: center; gap: 10px; margin: 0 0 16px; font-size: 14px; color: var(--text-dim); }
+.pat-num input {
+  width: 120px; padding: 8px 12px; border-radius: 12px; border: 0;
+  background: rgba(15, 5, 22, .55); box-shadow: inset 0 0 0 1.5px rgba(184,156,255,.3);
+  color: var(--bone); font: 600 18px var(--f-ui); text-align: center; font-variant-numeric: tabular-nums;
+}
+.pat-num input:focus { outline: none; box-shadow: inset 0 0 0 2px var(--candy); }
+.pat-num input.shake { animation: pat-shake .36s; }
+
+/* Enge Handys hochkant: Kopfzeile und Knöpfe zusammenrücken, Tisch bis an den Rand */
+@media (max-width: 430px) {
+  .pat-screen .sol-meta { gap: 8px; }
+  .pat-screen .sol-meta b { font-size: 15px; }
+  .pat-screen .topbar-actions { gap: 2px; }
+  .pat-screen .pat-table { margin: 0 2px; }
+  .pat-screen .sol-controls { gap: 0; }
+  .pat-screen .ctl { min-width: 0; flex: 1; padding: 6px 4px; }
+}
