@@ -5,6 +5,7 @@ import { store } from './store.js';
 import { EXTRA } from './lines-extra.js';
 import { CHOC } from './lines-choc.js';
 import { chocSVG } from './clerk.js';
+import { seasonalLine } from './winter.js';
 
 // Aktiver Croupier: 'kortomi' (Standard) oder 'choc' (im Shop gekauft)
 export const dealer = () => (store.d.look?.dealer === 'choc' ? 'choc' : 'kortomi');
@@ -75,6 +76,7 @@ for (const [k, arr] of Object.entries(EXTRA)) LINES[k] = [...(LINES[k] || []), .
 // Mischbeutel je Schlüssel: Jeder Spruch kommt erst wieder, wenn alle anderen dran waren
 const bags = {}, last = {};
 export function pick(key, vars = {}) {
+  const w = seasonalLine(key, isChoc()); if (w) return w; // Winter-Varianten (winter.js)
   // Choc hat eigene Sprüche; fehlt ein Schlüssel, nimmt er den allgemeinen Smalltalk
   if (isChoc()) { const ck = CHOC[key] ? key : 'idle'; return pickFrom('c:' + ck, CHOC[ck], vars); }
   return pickFrom(key, LINES[key], vars);

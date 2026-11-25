@@ -64,6 +64,8 @@ export function unlockAudio() {
 
 const ok = () => enabled && ctx && ctx.state === 'running';
 const now = () => ctx.currentTime;
+// Für die Hintergrundmusik (music.js): derselbe Kontext, erst nach unlockAudio() vorhanden
+export const audioContext = () => ctx;
 
 function env(g, t, peak, attack, dur) {
   g.gain.setValueAtTime(0.0001, t);

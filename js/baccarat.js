@@ -10,6 +10,7 @@ import { celebrate } from './fx.js';
 import { fmt, updateBalance } from './ui.js';
 import { maybeTutorial, helpButton } from './tutorial.js';
 import { playRound, handTotal, payout } from './baccarat-rules.js';
+import { noteResult } from './streaks.js';
 
 const M = 'bac';
 const DECKS = 8, RESHUFFLE = 16, MAX_SPOT = 5000, ROAD = 36;
@@ -312,6 +313,7 @@ function resolve(r, stake) {
   phase = 'bet';
   if (r.winner !== 'T') onTable[r.winner].forEach(c => layer.elOf(c)?.classList.add('win'));
   updateBalance(net > 0);
+  noteResult(M, net > 0 ? 'win' : net < 0 ? 'loss' : 'push', net);
   const title = r.winner === 'T' ? 'Unentschieden' : `${NAME[r.winner]} gewinnt`;
   const sub = `${r.pt} : ${r.bt} · ${net > 0 ? '+' + fmt(net) : net < 0 ? '−' + fmt(-net) : '±0'}`;
   const big = tieWon || net >= Math.max(500, stake * 2);

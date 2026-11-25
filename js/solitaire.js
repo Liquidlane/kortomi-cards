@@ -7,6 +7,7 @@ import { mountMascot, say, pick, setMood } from './mascot.js';
 import { celebrate, sparkleAt, batSwarm } from './fx.js';
 import { fmt, updateBalance, toast } from './ui.js';
 import { runCascade } from './cascade.js';
+import { noteResult } from './streaks.js';
 
 const M = 'sol';
 const $ = s => document.querySelector(s);
@@ -441,6 +442,7 @@ function checkWin() {
   st.chips = (st.chips || 0) + chips;
   store.d.solSave = null; store.save(true);
   updateBalance();
+  noteResult('sol', 'win', chips);
   unlock('sol_first');
   if (S.time < 180) unlock('sol_fast');
   if (S.draw3) unlock('sol_draw3');
@@ -501,7 +503,7 @@ function talk(key, mood, priority = 1) {
 async function startNew() {
   if (busy) return;
   table.querySelector('.overlay-card')?.remove();
-  if (S && S.started && !S.won && !challenge) { store.d.stats.sol.streak = 0; }
+  if (S && S.started && !S.won && !challenge) { store.d.stats.sol.streak = 0; noteResult('sol', 'loss', 0); }
   busy = true;
   autoBtn._said = false;
   newGame();

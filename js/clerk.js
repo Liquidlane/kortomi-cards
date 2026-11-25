@@ -3,6 +3,7 @@
 import { kortomiSVG, MOODS, SUIT_PATH } from './art.js';
 import { speak } from './audio.js';
 import { store } from './store.js';
+import { winterHat } from './winter.js';
 
 // ---------- Choccypuddin ----------
 const CHOC_MOODS = ['idle', 'happy', 'shock', 'sad', 'sleep', 'yawn', 'love'];
@@ -86,6 +87,7 @@ export function chocSVG() {
       <g class="mood yawn smug"><ellipse cx="120" cy="168" rx="9" ry="12" fill="#4e2a1a"/><ellipse cx="120" cy="174" rx="6" ry="4" fill="#ff8fb0"/></g>
       <g class="mood sleep"><path d="M114 164 q6 3 12 0" stroke="#2f4d8a" stroke-width="2.6" fill="none" stroke-linecap="round"/><circle class="c-bubble" cx="132" cy="168" r="5" fill="#cfe6ff" stroke="#8ec5ff" stroke-width="1.5"/>
         <g class="c-zzz" font-family="Fredoka, sans-serif" font-weight="700" fill="#cfe6ff"><text x="190" y="84" font-size="22">Z</text><text x="208" y="62" font-size="16">z</text><text x="220" y="46" font-size="12">z</text></g></g>
+      ${winterHat('choc')}
     </g>
   </g>
 </svg>`;

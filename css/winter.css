@@ -1,0 +1,38 @@
+/* ==========================================================================
+   Winter-Deko (js/winter.js): aktiv, solange <html> die Klasse .winter trägt
+   ========================================================================== */
+.winter-hat { display: none; }
+html.winter .winter-hat { display: inline; }
+
+/* Lichterkette quer über die Diorama-Wand */
+.winter-deco { display: none; }
+html.winter .winter-deco { display: block; position: absolute; inset: 0; pointer-events: none; }
+.winter-garland { position: absolute; left: 0; top: 23%; width: 100%; height: 13%; overflow: visible; }
+.winter-garland .wb { filter: drop-shadow(0 0 5px rgba(255, 236, 190, .85)); animation: winter-twinkle 2.6s ease-in-out infinite; }
+.winter-garland .wb.b1 { animation-delay: -.9s; }
+.winter-garland .wb.b2 { animation-delay: -1.7s; }
+@keyframes winter-twinkle { 0%, 100% { opacity: 1; } 50% { opacity: .35; } }
+
+/* Schnee: eigene Leinwand zwischen Szene und Vignette, also hinter dem Spieltisch */
+.winter-snow { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.winter-snow[hidden] { display: none; }
+
+/* Leichter Raureif auf dem Neonschild */
+html.winter .neon-sign span { text-shadow: 0 0 6px #ff5fa2, 0 0 18px #ff5fa2, 0 0 40px #ff2d86, 0 -3px 0 rgba(255, 255, 255, .55); }
+
+/* ---------- Shop: Winterfilz ---------- */
+[data-felt="winter"] { --felt-hi: #4a8fa8; --felt-mid: #1f5470; --felt-dark: #0c2638; }
+
+/* ---------- Shop: Plätzchen-Chips (überschreibt die SVG-Füllfarben, Ringfarben bleiben je Wert) ---------- */
+:is(body[data-chips="cookie"], .chips-cookie) .chip-svg:not(.chips-classic *) > circle:nth-of-type(1) { fill: #d99a5b; }
+:is(body[data-chips="cookie"], .chips-cookie) .chip-svg:not(.chips-classic *) > circle:nth-of-type(2) { fill: #c98446; }
+:is(body[data-chips="cookie"], .chips-cookie) .chip-svg:not(.chips-classic *) > circle:nth-of-type(3) { fill: #e6b47c; }
+:is(body[data-chips="cookie"], .chips-cookie) .chip-svg:not(.chips-classic *) > rect { fill: #fff4e6; }
+:is(body[data-chips="cookie"], .chips-cookie) .chip-svg:not(.chips-classic *) > rect:nth-of-type(3n) { fill: #ff9cc7; }
+:is(body[data-chips="cookie"], .chips-cookie) .chip-svg:not(.chips-classic *) > rect:nth-of-type(3n+1) { fill: #8a5432; }
+:is(body[data-chips="cookie"], .chips-cookie) .chip-svg:not(.chips-classic *) > text { fill: #4e2a1a; }
+/* Seitenansicht im Stapel */
+:is(body[data-chips="cookie"], .chips-cookie) .chip-svg:not(.chips-classic *) > ellipse:nth-of-type(2) { fill: #d99a5b; }
+:is(body[data-chips="cookie"], .chips-cookie) .chip-svg:not(.chips-classic *) > ellipse:nth-of-type(n+3):not(:last-of-type) { fill: #6b3a1e; }
+
+.reduce-motion .winter-garland .wb { animation: none; }

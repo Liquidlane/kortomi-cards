@@ -7,6 +7,7 @@ import { store, unlock, chipValues } from './store.js';
 import { mountMascot, say, setMood, jump, pick, pickLocal } from './mascot.js';
 import { celebrate } from './fx.js';
 import { fmt, updateBalance } from './ui.js';
+import { noteResult } from './streaks.js';
 
 const M = 'vp';
 const $ = s => document.querySelector(s);
@@ -249,6 +250,7 @@ function settle() {
     if (Math.random() < 0.5) { jump(M); say(M, line('lose'), { mood: 'happy' }); } else setMood(M, 'smug', 1400);
   }
   store.save(true);
+  noteResult('vp', !res ? 'loss' : PAY_OF[res].mult > 1 ? 'win' : 'push', res ? stake * (PAY_OF[res].mult - 1) : stake);
   renderRack(); renderActions();
 }
 

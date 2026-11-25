@@ -6,6 +6,7 @@ import { store, unlock, chipValues } from './store.js';
 import { mountMascot, say, pick, setMood, jump } from './mascot.js';
 import { celebrate, burst } from './fx.js';
 import { fmt, updateBalance, toast } from './ui.js';
+import { noteResult } from './streaks.js';
 
 const DECKS = 6, MIN_BET = 5, MAX_BET = 5000, MAX_HANDS = 4, CUT = 0.25;
 const M = 'bj';
@@ -554,6 +555,7 @@ function settle() {
   if (store.d.balance >= 10000) unlock('bj_rich');
   unlock('bj_first');
   store.save();
+  noteResult('bj', net > 0 ? 'win' : net < 0 ? 'loss' : 'push', net);
 
   render();
   renderBet();

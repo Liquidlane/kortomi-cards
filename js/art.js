@@ -1,4 +1,5 @@
 // Alle Grafiken als handgebautes SVG: Karten, Kartenrücken, Chips, Kortomi, Medaillen, Icons.
+import { winterHat } from './winter.js';
 export const SUITS = ['S', 'H', 'D', 'C'];
 export const RED = { H: true, D: true };
 export const RANK_LABEL = { 1: 'A', 11: 'B', 12: 'D', 13: 'K' };
@@ -290,6 +291,7 @@ export function kortomiSVG() {
         <path d="M176 98 q6 10 0 14 q-6 -4 0 -14z" fill="#9fd6ff" opacity=".85"/></g>
       <g class="mood wink"><path d="M108 144 q6 6 12 0 q6 6 12 0" fill="none" stroke="#fff6fb" stroke-width="3" stroke-linecap="round"/><path d="M121 147 q5 12 10 0z" fill="#ff7ab4"/></g>
       <g class="mood think"><path d="M110 148 h18" stroke="#fff6fb" stroke-width="3" stroke-linecap="round"/><circle cx="200" cy="70" r="5" fill="#d9ccff"/><circle cx="212" cy="54" r="7" fill="#d9ccff"/></g>
+      ${winterHat('kortomi')}
     </g>
   </g>
 </svg>`;

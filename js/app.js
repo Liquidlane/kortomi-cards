@@ -18,6 +18,8 @@ import { cloudHTML, bindCloud } from './cloud.js';
 import { shopHTML, bindShop, applyLook, dailyReady, claimDaily, DAILY_AMOUNT } from './shop.js';
 import { CATALOG, dailyAmount } from './shop.js';
 import { initProgress, refreshProgressLobby, showStreakCard, queueChallenge, takeChallenge, statsOverviewHTML, achGroupedHTML } from './progress.js';
+import { applyMusic } from './music.js';
+import { applyWinter } from './winter.js';
 
 const $ = s => document.querySelector(s);
 const $$ = s => [...document.querySelectorAll(s)];
@@ -32,6 +34,7 @@ function applySettings() {
   configureAudio({ sound: s.sound, vol: s.volume, voice: s.voice, pitch: s.voicePitch });
   document.body.classList.toggle('reduce-motion', !s.motion);
   setReduced(!s.motion);
+  applyMusic(s); applyWinter(s);
   $$('.js-sound').forEach(b => { b.innerHTML = icon(s.sound ? 'soundOn' : 'soundOff'); b.classList.toggle('is-off', !s.sound); });
 }
 
@@ -179,6 +182,8 @@ function settingsHTML() {
   ${sw('sound', 'Soundeffekte')}
   <div class="set-row"><span class="lbl">Lautstärke</span><input type="range" min="0" max="1" step="0.05" value="${s.volume}" data-set="volume" aria-label="Lautstärke"></div>
   ${sw('voice', 'Kortomis Stimme', 'Sie brabbelt beim Reden mit')}
+  ${sw('music', 'Musik', 'Lounge-Jazz, live im Gerät erzeugt')}
+  <div class="set-row"><span class="lbl">Musik-Lautstärke</span><input type="range" min="0" max="1" step="0.05" value="${s.musicVol}" data-set="musicVol" aria-label="Musik-Lautstärke"></div>
   <div class="set-row"><span class="lbl">Stimmlage</span><span class="seg" data-seg="voicePitch">
     ${['Tief', 'Normal', 'Hoch'].map((l, i) => `<button aria-pressed="${s.voicePitch === i}" data-v="${i}">${l}</button>`).join('')}</span></div>
   <div class="set-group">Kortomi</div>
@@ -191,6 +196,8 @@ function settingsHTML() {
     <button aria-pressed="${!s.draw3}" data-v="0">1 Karte</button><button aria-pressed="${s.draw3}" data-v="1">3 Karten</button></span></div>
   <div class="set-group">Darstellung</div>
   ${sw('motion', 'Animationen & Effekte', 'Aus: ruhiger, spart Akku')}
+  <div class="set-row"><span class="lbl">Winter-Deko<small>Auto: 1. Dezember bis 6. Januar</small></span><span class="seg" data-seg="winter">
+    ${['Auto', 'An', 'Aus'].map((l, i) => `<button aria-pressed="${s.winter === i}" data-v="${i}">${l}</button>`).join('')}</span></div>
   <div class="set-group">Daten</div>
   <div class="set-row"><span class="lbl">Spielregeln<small>Erklärungen nochmal zeigen</small></span><button class="btn ghost" id="reset-tutorials" type="button">Tutorials zurücksetzen</button></div>
   <button class="danger" id="reset-all">Alles zurücksetzen (Guthaben, Statistik, Erfolge, Käufe)</button>
