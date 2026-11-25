@@ -1,0 +1,63 @@
+/* Baccarat (js/baccarat.js) */
+.bac-table { --bac-p: #9fb4ff; --bac-b: #ff6f9e; --bac-t: #7fe0b0; }
+
+/* Straße: letzte Ergebnisse als Perlen, spaltenweise in drei Reihen */
+.bac-road {
+  position: absolute; top: 8px; right: 10px; z-index: 3; left: 96px;
+  display: grid; grid-template-rows: repeat(3, 17px); grid-auto-flow: column; grid-auto-columns: 17px;
+  gap: 3px; justify-content: start; align-content: start;
+  padding: 6px 8px; border-radius: 12px; max-height: 75px; overflow-x: auto; overflow-y: hidden;
+  background: rgba(23, 11, 32, .5); box-shadow: inset 0 0 0 1.5px rgba(232,194,122,.3);
+  scrollbar-width: none; pointer-events: auto;
+}
+.bac-road::-webkit-scrollbar { display: none; }
+.bac-road .bead {
+  width: 17px; height: 17px; border-radius: 50%; display: grid; place-items: center;
+  font-style: normal; font-size: 10px; font-weight: 700; line-height: 1; color: #1a0b24;
+}
+.bac-road .b-P { background: var(--bac-p); }
+.bac-road .b-B { background: var(--bac-b); }
+.bac-road .b-T { background: var(--bac-t); }
+.bac-road .bead.nat { box-shadow: 0 0 0 2px var(--brass); }
+.bac-road .road-empty { grid-row: 1 / 4; align-self: center; white-space: nowrap; font-size: 12px; color: var(--text-dim); }
+
+/* Punkte-Plaketten unter den Händen */
+.bac-badge.bac-P { color: var(--bac-p); }
+.bac-badge.bac-B { color: var(--bac-b); }
+.bac-badge.bj { color: var(--brass); }
+
+/* Wettfelder */
+.bac-spots {
+  position: absolute; left: 10px; right: 10px; bottom: 10px; z-index: 2;
+  display: grid; grid-template-columns: 1fr .82fr 1fr; gap: 8px;
+}
+.bac-spot {
+  position: relative; display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+  padding: 7px 4px 4px; border: 0; border-radius: 18px; cursor: pointer; overflow: hidden;
+  background: rgba(23, 11, 32, .28); color: var(--bone); font: inherit;
+  box-shadow: inset 0 0 0 2px rgba(232,194,122,.5), 0 0 18px rgba(232,194,122,.08);
+  transition: transform .15s, box-shadow .25s, background .25s;
+  -webkit-tap-highlight-color: transparent;
+}
+.bac-spot:active:not(:disabled) { transform: scale(.97); }
+.bac-spot:disabled { cursor: default; }
+.bac-spot .bac-spot-name { font-family: var(--f-goth); font-weight: 700; font-size: clamp(17px, 4.6vw, 24px); line-height: 1; }
+.bac-spot[data-side="P"] .bac-spot-name { color: var(--bac-p); }
+.bac-spot[data-side="B"] .bac-spot-name { color: var(--bac-b); }
+.bac-spot[data-side="T"] .bac-spot-name { color: var(--bac-t); font-size: clamp(13px, 3.4vw, 19px); }
+.bac-spot .bac-spot-pay { margin-top: 2px; font-size: 11.5px; font-weight: 600; color: var(--brass); white-space: nowrap; }
+.bac-spot .bac-spot-pay small { display: block; font-size: 10px; font-weight: 500; color: var(--text-dim); text-align: center; }
+.bac-spot .bac-stack { position: absolute; left: 50%; bottom: 18px; width: min(40%, 40px); aspect-ratio: 1; transform: translateX(-50%); pointer-events: none; }
+.bac-spot .bac-stack .chip { position: absolute; left: 0; width: 100%; }
+.bac-spot .bac-stack svg { width: 100%; height: auto; display: block; }
+.bac-spot .bac-amt { position: absolute; bottom: 3px; left: 0; right: 0; font-size: 12.5px; font-weight: 700; color: var(--brass); font-variant-numeric: tabular-nums; }
+.bac-spot.has { background: rgba(232,194,122,.1); box-shadow: inset 0 0 0 2px var(--brass), 0 0 18px rgba(232,194,122,.25); }
+.bac-spot.has .bac-spot-pay { opacity: .35; }
+.bac-spot.win { box-shadow: inset 0 0 0 2.5px var(--candy), 0 0 22px rgba(255,95,162,.55); }
+
+/* Flache Bildschirme: Wettfelder kompakter */
+@media (max-height: 520px) {
+  .bac-spot .bac-spot-pay small { display: none; }
+  .bac-road { grid-template-rows: repeat(2, 15px); grid-auto-columns: 15px; max-height: 50px; }
+  .bac-road .bead { width: 15px; height: 15px; font-size: 9px; }
+}

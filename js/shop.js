@@ -18,6 +18,7 @@ export const CATALOG = [
     key: 'games', title: 'Spiele', items: [
       { id: 'game_hilo', name: 'Höher oder Tiefer', price: 2000, desc: 'Rate die nächste Karte. Jeder Treffer erhöht den Multiplikator – kassier, bevor es kracht.', art: () => mini('7H', 8, 10, -10) + mini('back', 46, 4, 8) },
       { id: 'game_poker', name: 'Video-Poker', price: 5000, desc: 'Jacks or Better: fünf Karten, halten, nachziehen. Royal Flush zahlt 250-fach.', art: () => mini('1S', 2, 10, -12) + mini('13S', 30, 4, -2) + mini('12S', 58, 10, 9) },
+      { id: 'game_baccarat', name: 'Baccarat', price: 4000, desc: 'Punto Banco: Setz auf Spieler, Bank oder Unentschieden. Wer näher an der 9 liegt, gewinnt. Unentschieden zahlt 8:1.', art: () => mini('9H', 8, 8, -9) + mini('13C', 46, 4, 8) },
     ],
   },
   {
