@@ -9,10 +9,10 @@ const defaults = () => ({
   pendingVp: 0,
   lastBet: 25,
   owned: {},
-  look: { felt: 'velvet', back: 'kortomi', dealer: 'kortomi' },
+  look: { felt: 'velvet', back: 'kortomi', dealer: 'kortomi', chips: 'classic' },
   daily: '',
   sideBet: { hl: 25, vp: 25 },
-  settings: { sound: true, volume: 0.7, voice: true, voicePitch: 1, draw3: false, tips: true, chatty: 2, motion: true, mascotSol: true },
+  settings: { sound: true, volume: 0.7, voice: true, voicePitch: 1, draw3: false, tips: true, chatty: 2, motion: true, mascotSol: true, music: false, musicVol: 0.5, winter: 0 },
   stats: {
     bj: { hands: 0, wins: 0, losses: 0, pushes: 0, blackjacks: 0, busts: 0, biggestWin: 0, peak: START_BALANCE, streak: 0, bestStreak: 0, dealerBusts: 0, gifts: 0 },
     sol: { played: 0, won: 0, bestTime: 0, bestScore: 0, streak: 0, bestStreak: 0, chips: 0 },

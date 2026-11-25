@@ -31,6 +31,7 @@ export const CATALOG = [
       { id: 'felt_emerald', look: 'emerald', name: 'Smaragdgruft', price: 1500, desc: 'Klassisches Casinogrün, nur etwas unheimlicher.' },
       { id: 'felt_midnight', look: 'midnight', name: 'Mitternacht', price: 1500, desc: 'Tiefblau wie der Himmel um drei Uhr nachts.' },
       { id: 'felt_blood', look: 'blood', name: 'Blutmond', price: 3000, desc: 'Dunkelrot. Für Leute, die gern dramatisch verlieren.' },
+      { id: 'felt_winter', look: 'winter', name: 'Winterfilz', price: 1800, desc: 'Eisblau wie ein zugefrorener See. Kortomi schlittert gern drauf herum.' },
     ],
   },
   {
@@ -39,6 +40,12 @@ export const CATALOG = [
       { id: 'back_frost', look: 'frost', name: 'Frostgruft', price: 1200, desc: 'Eisblau und kühl. Wie Kortomis Herz beim Austeilen.' },
       { id: 'back_toxic', look: 'toxic', name: 'Giftgrün', price: 1200, desc: 'Leuchtet ein bisschen. Nicht ablecken.' },
       { id: 'back_noir', look: 'noir', name: 'Schwarzgold', price: 4000, desc: 'Edel, schwarz, golden. Für echte High Roller.' },
+    ],
+  },
+  {
+    key: 'chips', title: 'Chip-Design', items: [
+      { id: 'chips_classic', look: 'classic', name: 'Kortomi-Chips', price: 0, free: true, desc: 'Die Originale in Pink, Lila und Gold.', art: () => `<span class="shop-chip chips-classic">${chipSVG(100)}</span>` },
+      { id: 'chips_cookie', look: 'cookie', name: 'Plätzchen', price: 2000, desc: 'Butterkekse mit Zuckerguss. Nicht reinbeißen, Kortomi zählt nach.', art: () => `<span class="shop-chip chips-cookie">${chipSVG(25)}</span>` },
     ],
   },
   {
@@ -56,6 +63,7 @@ const has = i => i.free || owns(i.id);
 export function applyLook() {
   const { felt, back } = store.d.look;
   document.body.dataset.felt = felt;
+  document.body.dataset.chips = store.d.look.chips || 'classic';
   setCardBack(back);
 }
 

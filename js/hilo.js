@@ -8,6 +8,7 @@ import { store, unlock, chipValues } from './store.js';
 import { mountMascot, say, setMood, jump, pick, pickLocal } from './mascot.js';
 import { celebrate } from './fx.js';
 import { fmt, updateBalance } from './ui.js';
+import { noteResult } from './streaks.js';
 
 const M = 'hl';
 const EDGE = 0.97, TRAIL = 6;
@@ -197,6 +198,7 @@ async function guess(dir) {
     phase = 'playing'; renderBadge(); renderActions();
   } else {
     store.d.pendingHl = 0; store.save(true);
+    noteResult('hl', 'loss', stake);
     phase = 'idle';
     $('#hl-cards').querySelector(`[data-uid="${next.uid}"]`)?.classList.add('shake');
     sfx.nope?.(); vibrate(20);
@@ -213,6 +215,7 @@ function cashout() {
   const s = store.d.stats.hl; s.cashouts++; s.biggestWin = Math.max(s.biggestWin, win - stake);
   if (mult >= 10) unlock('hl_x10');
   store.save(true);
+  noteResult('hl', 'win', win - stake);
   updateBalance(true); sfx.chip(4); sfx.sparkle();
   phase = 'idle';
   tag('Kassiert', `+${fmt(win)}`, mult >= 5 ? 'bj' : 'win');
