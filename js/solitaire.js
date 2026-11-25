@@ -24,15 +24,17 @@ let L = {};
 let timer = null;
 let busy = false;
 let drag = null;
+// Tagesaufgabe (progress.js): { date, deck(), saved(), save(sv), onWin(res), talk } – eigener Spielstand, solSave bleibt unberührt
+let challenge = null;
 
 const isRed = c => !!RED[c.suit];
 const top = a => a[a.length - 1];
 
 // ---------- Zustand ----------
 function newGame() {
-  const deck = shuffle(newDeck(1));
+  const deck = challenge ? challenge.deck() : shuffle(newDeck(1));
   byUid = new Map(deck.map(c => [c.uid, c]));
-  S = { stock: [], waste: [], found: [[], [], [], []], tab: [[], [], [], [], [], [], []], score: 0, moves: 0, time: 0, draw3: store.d.settings.draw3, usedUndo: false, started: false, won: false };
+  S = { stock: [], waste: [], found: [[], [], [], []], tab: [[], [], [], [], [], [], []], score: 0, moves: 0, time: 0, draw3: challenge ? false : store.d.settings.draw3, usedUndo: false, started: false, won: false };
   let k = 0;
   for (let i = 0; i < 7; i++) for (let j = i; j < 7; j++) { const c = deck[k++]; c.up = false; S.tab[j].push(c); }
   S.tab.forEach(col => (top(col).up = true));
@@ -50,6 +52,7 @@ function restore(snap) {
   S.score = snap.score; S.moves = snap.moves; S.draw3 = snap.draw3;
 }
 function persist() {
+  if (challenge) { challenge.save(!S || S.won ? null : { ...snapshot(), time: S.time, started: S.started, deck: 1 }); return; }
   if (!S || S.won) { store.d.solSave = null; store.save(); return; }
   store.d.solSave = { ...snapshot(), time: S.time, started: S.started, deck: [...byUid.values()].map(c => c.uid) };
   store.save();
@@ -406,7 +409,8 @@ async function autoFinish() {
 function startTimer() {
   if (S.started) return;
   S.started = true;
-  store.d.stats.sol.played++; store.save();
+  if (!challenge) store.d.stats.sol.played++;
+  store.save();
 }
 function tick() {
   if (!S || !S.started || S.won || document.hidden) return;
@@ -420,6 +424,7 @@ const clock = s => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
 function checkWin() {
   if (S.won || !S.found.every(f => f.length === 13)) return;
   S.won = true;
+  if (challenge) return challengeWin();
   const bonus = S.time > 30 ? Math.round(700000 / S.time) : 0;
   S.score += bonus;
   const st = store.d.stats.sol;
@@ -444,6 +449,15 @@ function checkWin() {
   if (st.won >= 10) unlock('sol_ten');
   render();
   setTimeout(() => winShow(bonus, reward, chips), 500);
+}
+
+// Tagesaufgabe gelöst: keine normale Solitaire-Wertung, Prämie kommt aus progress.js (einmal pro Tag)
+function challengeWin() {
+  challenge.save(null);
+  const { reward = [], chips = 0 } = challenge.onWin({ time: S.time, moves: S.moves, noUndo: !S.usedUndo }) || {};
+  updateBalance();
+  render();
+  setTimeout(() => winShow(0, reward, chips), 500);
 }
 
 async function winShow(bonus, reward = [], chips = 0) {
@@ -487,7 +501,7 @@ function talk(key, mood, priority = 1) {
 async function startNew() {
   if (busy) return;
   table.querySelector('.overlay-card')?.remove();
-  if (S && S.started && !S.won) { store.d.stats.sol.streak = 0; }
+  if (S && S.started && !S.won && !challenge) { store.d.stats.sol.streak = 0; }
   busy = true;
   autoBtn._said = false;
   newGame();
@@ -517,8 +531,13 @@ async function startNew() {
 
 // ---------- Init ----------
 let inited = false;
-export function enterSolitaire() {
+export function enterSolitaire(ch = null) {
   const first = !inited;
+  // Wechsel zwischen normalem Spiel und Tagesaufgabe: alten Stand sichern, anderen laden
+  const switched = !first && (ch?.date || null) !== (challenge?.date || null);
+  if (switched) { if (S && !busy) persist(); busy = false; table.querySelector('.overlay-card')?.remove(); }
+  challenge = ch;
+  $('#screen-solitaire').classList.toggle('is-challenge', !!challenge);
   if (!inited) {
     inited = true;
     mountMascot(mascotEl, M);
@@ -542,10 +561,10 @@ export function enterSolitaire() {
   }
   mascotEl.classList.toggle('away', !store.d.settings.mascotSol);
   computeLayout();
-  if (first) {
-    const sv = store.d.solSave;
+  if (first || switched) {
+    const sv = challenge ? challenge.saved() : store.d.solSave;
     if (sv && sv.deck) { loadSave(sv); layer.clear(); render({ instant: true }); $('#sol-time').textContent = clock(S.time); setTimeout(() => talk('solResume', 'wink', 2), 700); }
-    else { startNew(); setTimeout(() => talk('solEnter', 'smug', 2), 900); }
+    else { startNew(); setTimeout(() => talk(challenge?.talk || 'solEnter', 'smug', 2), 900); }
   } else {
     // Einstellung "3 Karten ziehen" greift beim nächsten Spiel
     render({ instant: true });
@@ -556,5 +575,5 @@ export function enterSolitaire() {
 export function solitaireSettingChanged() {
   if (!S) return;
   mascotEl.classList.toggle('away', !store.d.settings.mascotSol);
-  if (!S.started && S.draw3 !== store.d.settings.draw3) { S.draw3 = store.d.settings.draw3; render(); persist(); }
+  if (!challenge && !S.started && S.draw3 !== store.d.settings.draw3) { S.draw3 = store.d.settings.draw3; render(); persist(); }
 }

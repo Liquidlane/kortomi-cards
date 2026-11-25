@@ -13,6 +13,8 @@ import { enterHilo } from './hilo.js';
 import { enterPoker } from './poker.js';
 import { cloudHTML, bindCloud } from './cloud.js';
 import { shopHTML, bindShop, applyLook, dailyReady, claimDaily, DAILY_AMOUNT } from './shop.js';
+import { CATALOG, dailyAmount } from './shop.js';
+import { initProgress, refreshProgressLobby, showStreakCard, queueChallenge, takeChallenge, statsOverviewHTML, achGroupedHTML } from './progress.js';
 
 const $ = s => document.querySelector(s);
 const $$ = s => [...document.querySelectorAll(s)];
@@ -54,14 +56,16 @@ function refreshLobby() {
   for (const g in GAMES) { const on = owns(GAMES[g]); $(`.pick-${g}`).hidden = !on; if (on) n++; }
   $('.game-picks').classList.toggle('many', n > 2);
   $('#daily-btn').hidden = !dailyReady();
-  $('#daily-btn').lastChild.textContent = `Tagesgeld abholen (+${DAILY_AMOUNT})`;
+  $('#daily-btn').lastChild.textContent = `Tagesgeld abholen (+${dailyAmount()})`;
+  refreshProgressLobby();
 }
 $('#daily-btn').addEventListener('click', () => {
-  if (!claimDaily()) return;
-  sfx.sparkle(); toast(`+${DAILY_AMOUNT} Chips`, 'Kortomis Tagesgeld. Gib’s nicht gleich aus.');
-  say('lobby', pick('dailyGift'), { mood: 'wink', priority: 3 });
+  const r = claimDaily();
+  if (!r) return;
+  sfx.sparkle(); showStreakCard(r, DAILY_AMOUNT); // 7-Tage-Leiste + Kortomis Kommentar
   refreshLobby();
 });
+$('#chal-btn').addEventListener('click', () => { unlockAudio(); queueChallenge(); go('solitaire'); });
 
 // ---------- Navigation ----------
 let current = 'lobby';
@@ -73,7 +77,7 @@ function go(name) {
   current = name;
   sfx.whoosh();
   if (name === 'blackjack') enterBlackjack();
-  else if (name === 'solitaire') enterSolitaire();
+  else if (name === 'solitaire') enterSolitaire(takeChallenge());
   else if (name === 'hilo') enterHilo();
   else if (name === 'poker') enterPoker();
   else lobbyGreet();
@@ -133,7 +137,7 @@ const sheet = $('#sheet'), backdrop = $('#sheet-backdrop');
 function openSheet(kind) {
   const body = $('#sheet-body');
   if (kind === 'settings') { $('#sheet-title').textContent = 'Einstellungen'; body.innerHTML = settingsHTML(); bindSettings(body); }
-  if (kind === 'stats') { $('#sheet-title').textContent = 'Statistik'; body.innerHTML = statsHTML(); }
+  if (kind === 'stats') { $('#sheet-title').textContent = 'Statistik'; body.innerHTML = statsOverviewHTML() + statsHTML(); }
   if (kind === 'achievements') { $('#sheet-title').textContent = 'Erfolge'; body.innerHTML = achHTML(); }
   if (kind === 'shop') { $('#sheet-title').textContent = 'Upgrade-Shop'; body.innerHTML = shopHTML(); bindShop(body, SHOP_HOOKS); hideBubble(); mountClerk($('#clerk')); }
   if (kind === 'cloud') { $('#sheet-title').textContent = 'Schon gespielt?'; body.innerHTML = cloudHTML(); bindCloud(body, CLOUD_HOOKS); }
@@ -236,10 +240,7 @@ function extraStats() {
 }
 
 function achHTML() {
-  const got = store.d.ach;
-  const df = new Intl.DateTimeFormat('de-DE', { day: 'numeric', month: 'short', year: 'numeric' });
-  return `<p class="ach-progress">${achCount()} von ${ACHIEVEMENTS.length} freigeschaltet</p><div class="ach-list">${ACHIEVEMENTS.map(a => `
-    <div class="ach ${got[a.id] ? '' : 'locked'}">${medalSVG(a.m, a.g)}<div><div class="t">${a.t}</div><div class="d">${a.d}${got[a.id] ? ` · ${df.format(got[a.id])}` : ''}</div></div></div>`).join('')}</div>`;
+  return achGroupedHTML(); // gruppiert nach Spiel, mit Fortschritt (progress.js)
 }
 
 // ---------- PWA ----------
@@ -256,6 +257,7 @@ if ('serviceWorker' in navigator && location.protocol !== 'file:') {
   showDealerName();
   updateBalance();
   checkNightOwl();
+  initProgress({ catalog: CATALOG });
   const start = location.hash.slice(1);
   if (start === 'blackjack' || start === 'solitaire' || (GAMES[start] && owns(GAMES[start]))) go(start);
   else lobbyGreet();

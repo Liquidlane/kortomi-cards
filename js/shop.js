@@ -6,6 +6,7 @@ import { sfx } from './audio.js';
 import { fmt, updateBalance, toast } from './ui.js';
 import { burst } from './fx.js';
 import { clerkHTML, clerkEvent, chocSVG } from './clerk.js';
+import { claimStreak, nextStreak, streakBonus } from './progress.js';
 
 // Figur-Vorschau mit eigenen Verlauf-IDs, damit sie nicht mit den Tisch-Figuren kollidiert
 const figure = (svg, tag) => svg.replace(/id="k-([\w-]+)"/g, `id="k-$1-${tag}"`).replace(/url\(#k-([\w-]+)\)/g, `url(#k-$1-${tag})`);
@@ -44,7 +45,7 @@ export const CATALOG = [
   {
     key: 'perks', title: 'Extras', items: [
       { id: 'perk_chip1000', name: '1.000er-Chip', price: 2500, desc: 'Ein neuer Chip für Blackjack, Höher oder Tiefer und Video-Poker.', art: () => `<span class="shop-chip">${chipSVG(1000)}</span>` },
-      { id: 'perk_daily', name: 'Kortomis Tagesgeld', price: 3000, desc: 'Hol dir in der Lobby jeden Tag 300 Chips ab.', art: () => `<span class="shop-glyph">${icon('gift')}</span>` },
+      { id: 'perk_daily', name: 'Kortomis Tagesgeld', price: 3000, desc: 'Hol dir in der Lobby jeden Tag 300 Chips ab. Jeder Tag in Folge bringt 50 mehr, bis 600 ab Tag 7. Einen Tag verpennt? Zurück auf 300.', art: () => `<span class="shop-glyph">${icon('gift')}</span>` },
     ],
   },
 ];
@@ -63,13 +64,16 @@ export function applyLook() {
 export const DAILY_AMOUNT = 300;
 const today = () => new Date().toLocaleDateString('sv'); // JJJJ-MM-TT, lokale Zeit
 export const dailyReady = () => owns('perk_daily') && store.d.daily !== today();
+// Mit Serie: Tag 1 = DAILY_AMOUNT, steigt bis Tag 7 (siehe progress.js)
+export const dailyAmount = () => streakBonus(DAILY_AMOUNT, nextStreak(today()));
 export function claimDaily() {
   if (!dailyReady()) return false;
+  const amount = dailyAmount(), streak = claimStreak(today());
   store.d.daily = today();
-  store.d.balance += DAILY_AMOUNT;
+  store.d.balance += amount;
   store.save(true);
   updateBalance(true);
-  return true;
+  return { amount, streak };
 }
 
 // ---------- Darstellung ----------
