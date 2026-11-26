@@ -5,6 +5,7 @@ import { CardLayer, newDeck, shuffle, sleep } from './cards.js';
 import { chipSVG, chipSideSVG, chipBreakdown } from './art.js';
 import { sfx, vibrate } from './audio.js';
 import { store, unlock, chipValues } from './store.js';
+import { rescueIfBroke } from './rescue.js';
 import { mountMascot, say, setMood, jump, pickLocal, dealer } from './mascot.js';
 import { celebrate } from './fx.js';
 import { fmt, updateBalance } from './ui.js';
@@ -330,6 +331,7 @@ function resolve(r, stake) {
     sfx.push(); say(M, line('push'), { mood: 'think' });
   }
   renderBadges(); renderRoad(); renderSpots(); renderRack(); renderActions();
+  rescueIfBroke(M, () => { renderRack(); renderActions(); }, 1600);
 }
 
 // ---------- Einstieg ----------
@@ -357,5 +359,6 @@ export function enterBaccarat() {
     });
   }
   computeLayout(); render({ instant: true }); renderRoad(); renderSpots(); renderRack(); renderActions();
+  if (phase === 'bet' && rescueIfBroke(M, () => { renderRack(); renderActions(); }, 700)) return;
   if (!maybeTutorial('baccarat', STEPS)) setTimeout(() => say(M, line('enter'), { mood: 'smug', priority: 2 }), 600);
 }

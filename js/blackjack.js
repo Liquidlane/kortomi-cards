@@ -7,6 +7,7 @@ import { mountMascot, say, pick, setMood, jump } from './mascot.js';
 import { celebrate, burst } from './fx.js';
 import { fmt, updateBalance, toast } from './ui.js';
 import { noteResult } from './streaks.js';
+import { rescueIfBroke } from './rescue.js';
 
 const DECKS = 6, MIN_BET = 5, MAX_BET = 5000, MAX_HANDS = 4, CUT = 0.25;
 const M = 'bj';
@@ -593,16 +594,7 @@ function settle() {
   } else { sfx.push(); say(M, pick('bjPush'), { mood: 'idle', priority: 2 }); }
 
   // Pleite?
-  setTimeout(() => {
-    if (store.d.balance < MIN_BET) {
-      unlock('bj_broke');
-      store.d.balance += 500; s.gifts++; store.save();
-      say(M, pick('bjBroke'), { mood: 'wink', priority: 3 });
-      updateBalance(true);
-      toast('500 Chips aufs Haus', 'Kortomi hat Mitleid.');
-      renderActions(); renderRack();
-    }
-  }, 1600);
+  rescueIfBroke(M, () => { renderActions(); renderRack(); }, 1600);
 
   busy = false;
   renderRack(); renderActions();
@@ -639,6 +631,7 @@ export function enterBlackjack() {
     toBetting(true);
   }
   computeLayout(); render({ instant: true }); renderRack(); renderActions(); renderBet();
+  if (rescueIfBroke(M, () => { renderRack(); renderActions(); }, 700)) return;
   setTimeout(() => say(M, pick('bjEnter'), { mood: 'smug', priority: 2 }), 600);
 }
 export function leaveBlackjack() { }

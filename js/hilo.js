@@ -5,6 +5,7 @@ import { CardLayer, newDeck, shuffle, sleep } from './cards.js';
 import { chipSVG } from './art.js';
 import { sfx, vibrate } from './audio.js';
 import { store, unlock, chipValues } from './store.js';
+import { rescueIfBroke } from './rescue.js';
 import { mountMascot, say, setMood, jump, pick, pickLocal } from './mascot.js';
 import { celebrate } from './fx.js';
 import { fmt, updateBalance } from './ui.js';
@@ -205,6 +206,7 @@ async function guess(dir) {
     tag('Daneben', `−${fmt(stake)}`, 'lose');
     jump(M); say(M, line('wrong'), { mood: 'happy', priority: 2 });
     renderBadge(); renderRack(); renderActions();
+    rescueIfBroke(M, () => { renderRack(); renderActions(); }, 1600);
   }
 }
 
@@ -242,5 +244,6 @@ export function enterHilo() {
     });
   }
   computeLayout(); render({ instant: true }); renderRack(); renderActions();
+  if (phase === 'idle' && rescueIfBroke(M, () => { renderRack(); renderActions(); }, 700)) return;
   setTimeout(() => say(M, line('enter'), { mood: 'smug', priority: 2 }), 600);
 }

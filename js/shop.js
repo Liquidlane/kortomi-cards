@@ -126,7 +126,7 @@ function shopListHTML() {
           <div class="shop-info"><b>${i.name}</b><span>${i.desc}</span></div>
           ${actionBtn(i)}
         </div>`).join('')}</div>`).join('')}
-    <p class="shop-foot">Kein Echtgeld, nur Kortomi-Chips. Pleite? Beim Blackjack gibt Kortomi dir Mitleids-Chips. Von 20 bis 6 Uhr bedient Choc – bitte nicht wecken.</p>`;
+    <p class="shop-foot">Kein Echtgeld, nur Kortomi-Chips. Pleite? Dann gibt’s Mitleids-Chips aufs Haus. Von 20 bis 6 Uhr bedient Choc – bitte nicht wecken.</p>`;
 }
 
 // ---------- Kaufen ----------

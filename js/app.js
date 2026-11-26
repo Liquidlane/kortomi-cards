@@ -2,6 +2,7 @@
 import { buildSprite, icon, useCard, medalSVG, chipSVG } from './art.js';
 import { unlockAudio, configureAudio, sfx } from './audio.js';
 import { store, ACHIEVEMENTS, achCount, setUnlockHandler, checkNightOwl, START_BALANCE, owns } from './store.js';
+import { rescueIfBroke } from './rescue.js';
 import { mountClerk, hideClerk } from './clerk.js';
 import { showDealerName, mountMascot, say, pick, detectCustomMascot, hideBubble, setMood, startIdleChatter, poke } from './mascot.js';
 import { detectCustomBack } from './cards.js';
@@ -121,6 +122,7 @@ mountMascot($('#lobby-mascot'), 'lobby');
 function lobbyGreet() {
   updateBalance(); refreshLobby();
   $('.js-ach-count').textContent = `${achCount()}/${ACHIEVEMENTS.length}`;
+  if (rescueIfBroke('lobby', refreshLobby, 900)) return;
   const h = new Date().getHours();
   const key = store.d.balance >= 5000 ? 'lobbyRich' : store.d.balance < 100 ? 'lobbyBroke' : (h >= 23 || h < 5) ? 'lobbyNight' : 'lobby';
   setTimeout(() => current === 'lobby' && say('lobby', pick(key), { mood: 'smug', priority: 2 }), 700);

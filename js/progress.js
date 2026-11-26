@@ -3,6 +3,7 @@
 // Daten liegen in store.d.prog (siehe defaults() in store.js).
 import { store, owns, unlock, ACHIEVEMENTS } from './store.js';
 import { newDeck } from './cards.js';
+import { solveKlondike } from './klondike-solver.js';
 import { medalSVG } from './art.js';
 import { sfx } from './audio.js';
 import { fmt, updateBalance, toast } from './ui.js';
@@ -83,14 +84,30 @@ function hash(str) {
 export function mulberry32(a) {
   return () => { a |= 0; a = (a + 0x6d2b79f5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
 }
-export function challengeDeck(date) {
-  const rng = mulberry32(hash(`kortomi-tagesaufgabe-${date}`));
+function seededDeck(seed) {
+  const rng = mulberry32(hash(seed));
   const a = newDeck(1);
   for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(rng() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
   return a;
 }
+// Nur nachweislich lösbare Blätter: Ist die Mischung des Tages unlösbar (oder zu knifflig für den Löser),
+// wird deterministisch neu gemischt („#1“, „#2“ …). Alle bekommen also weiterhin dasselbe Blatt.
+const chalOrder = new Map();
+export function challengeDeck(date) {
+  if (!chalOrder.has(date)) {
+    let found = null;
+    for (let n = 0; n < 40 && !found; n++) {
+      const d = seededDeck(`kortomi-tagesaufgabe-${date}${n ? '#' + n : ''}`);
+      if (solveKlondike(d, 50000) === true) found = d;
+    }
+    chalOrder.set(date, (found || seededDeck(`kortomi-tagesaufgabe-${date}`)).map(c => c.face));
+  }
+  const byFace = new Map(newDeck(1).map(c => [c.face, c]));
+  return chalOrder.get(date).map(f => byFace.get(f));
+}
 
 export const CHAL_REWARD = 250;
+const CHAL_VER = 2; // 2 = Blätter mit Lösbarkeitsprüfung; ältere Zwischenstände passen nicht mehr
 const chalSolvedToday = () => P().chal.last === dayKey();
 export function liveChalStreak(today = dayKey()) {
   const c = P().chal;
@@ -106,8 +123,8 @@ function makeChallenge(date) {
     date,
     talk: 'chalEnter',
     deck: () => challengeDeck(date),
-    saved: () => (P().chalSave?.date === date ? P().chalSave : null),
-    save: sv => { P().chalSave = sv ? { ...sv, date } : null; store.save(); },
+    saved: () => (P().chalSave?.date === date && P().chalSave.v === CHAL_VER ? P().chalSave : null),
+    save: sv => { P().chalSave = sv ? { ...sv, date, v: CHAL_VER } : null; store.save(); },
     onWin: ({ time }) => {
       const c = P().chal, first = c.last !== date;
       if (first) {

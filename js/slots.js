@@ -19,6 +19,7 @@
 import { kortomiHeadEmblem, chipSVG } from './art.js';
 import { sfx, vibrate } from './audio.js';
 import { store, unlock, chipValues } from './store.js';
+import { rescueIfBroke } from './rescue.js';
 import { mountMascot, say, setMood, jump, pickLocal, dealer } from './mascot.js';
 import { celebrate, sparkleAt } from './fx.js';
 import { fmt, updateBalance } from './ui.js';
@@ -76,7 +77,6 @@ const TALK = {
   jackpot: ['DREIMAL ICH?! Klar gewinnst du da. Ich bin einfach zu gut.', 'Mein Gesicht, dreimal! Der schönste Jackpot der Unterwelt.'],
   lose: ['Nichts. Herrlich.', 'Die Fledermäuse sagen danke.', 'Leere Walzen, volle Kasse. Meine Kasse.', 'Nochmal? Du willst doch nochmal.'],
   near: ['Uuuh, fast! Fast zählt nicht.', 'Zweimal ich… und dann nicht. Tragisch!'],
-  broke: ['Keine Chips mehr? Beim Blackjack verschenk ich manchmal welche.'],
 };
 // Wenn Choc den Croupier macht (eigener Präfix, damit die Mischbeutel nicht durcheinanderkommen)
 const TALK_CHOC = {
@@ -87,7 +87,6 @@ const TALK_CHOC = {
   jackpot: ['Dreimal Kortomi?! Sie wird schreien. Ich nehm Ohropax.'],
   lose: ['Nix. Sorry.', 'Diesmal nicht. Wie meine Prüfungen.', 'Leer. Wie mein Kühlschrank.'],
   near: ['Fast! Echt knapp.'],
-  broke: ['Keine Chips mehr… beim Blackjack gibt’s manchmal Mitleid.'],
 };
 const line = k => (dealer() === 'choc' ? pickLocal('slc', TALK_CHOC, k) : pickLocal('sl', TALK, k));
 
@@ -309,7 +308,7 @@ async function spin() {
   const bet = store.d.sideBet.sl;
   if (store.d.balance < bet) {
     sfx.nope();
-    if (store.d.balance < Math.min(...chipValues())) say(M, line('broke'), { mood: 'sad', priority: 2 });
+    rescueIfBroke(M, () => { renderRack(); renderActions(); });
     return;
   }
   store.d.balance -= bet; store.d.pendingSl = bet; store.save(true);
@@ -381,6 +380,7 @@ function finish(bet, res) {
     }
   }
   renderRack(); renderActions();
+  rescueIfBroke(M, () => { renderRack(); renderActions(); }, 1600);
 }
 const cellSym = (x, r) => REELS[x][(stops[x] + r) % REELS[x].length];
 
@@ -420,5 +420,6 @@ export function enterSlots() {
   }
   renderAll(); renderRack(); renderActions();
   if (phase === 'idle') { clearWins(); ledIdle(); }
+  if (phase === 'idle' && rescueIfBroke(M, () => { renderRack(); renderActions(); }, 700)) return;
   if (!maybeTutorial('slots', STEPS, 600)) setTimeout(() => say(M, line('enter'), { mood: 'smug', priority: 2 }), 600);
 }
